@@ -26,24 +26,20 @@ import { Icon } from "astro-icon/components";
         <h3 class="font-bold text-2xl text-[#F7F7F7] mb-6 text-center">Recent Mixes</h3>
         
         <div class="space-y-6">
-          {/* E.Heyl 35th Birthday Mix - Local MP3 - NEWEST */}
-          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a] overflow-hidden relative">
-            <div class="absolute inset-0 opacity-20">
-              <img 
-                src="/pictures/erick-35th-bday-mix-screenshot.png" 
-                alt="35th Birthday Mix Artwork" 
-                class="w-full h-full object-cover"
-              />
-            </div>
-            <div class="relative z-10">
-              <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">35th Birthday Mix</h4>
-              <p class="text-[#cccccc] text-sm mb-4">House & Dance • 2025</p>
-              <audio controls class="w-full">
-                <source src="/mixes/E.Heyl-35th-birthday-mix.mp3" type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
-              <p class="text-[#cccccc] mt-3">A celebratory mix recorded for my 35th birthday celebration.</p>
-            </div>
+          {/* E.Heyl 35th Birthday Mix - SoundCloud */}
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">35th Birthday Mix</h4>
+            <p class="text-[#cccccc] text-sm mb-4">House & Dance • 2025</p>
+            <iframe 
+              width="100%" 
+              height="166" 
+              scrolling="no" 
+              frameborder="no" 
+              allow="autoplay" 
+              src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/socks175/eheyl-35th-birthday-mix&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+              class="rounded"
+            ></iframe>
+            <p class="text-[#cccccc] mt-3">A celebratory mix recorded for my 35th birthday celebration.</p>
           </div>
 
           {/* Lobby Coders Series - SoundCloud then Mixcloud */}
