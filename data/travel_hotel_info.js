@@ -1,0 +1,50 @@
+export const hotel_data = [
+  {
+    title: "Juniper Hotel Cupertino",
+    phone_number: "800-555-1234",
+    address: "4123 Juniper Valley Road",
+    city_state_zip: "Cupertino, CA 95014",
+    distance: "11.1 miles from venue",
+    href: "https://www.hilton.com/en/hotels/sjcccqq-juniper-hotel-cupertino/",
+  },
+  {
+    title: "Hotel Cupertino",
+    phone_number: "948-345-2345",
+    address: "28910 Var Log Avenue",
+    city_state_zip: "Cupertino, CA 95014",
+    distance: "17.1 miles from venue",
+    href: "https://www.cupertino-hotel.com/",
+  },
+  {
+    title: "Hyatt Cupertino",
+    phone_number: "657-448-9815",
+    address: "29345 Louisiana Purchase Road",
+    city_state_zip: "Cupertino, CA 95014",
+    distance: "17.5 miles from venue",
+    href: "https://www.hyatt.com/hyatt-house/en-US/sjcxs-hyatt-house-san-jose-cupertino",
+  },
+  {
+    title: "Garden Inn Cupertino",
+    phone_number: "445-987-6543",
+    address: "45000 Boardwalk Parkway",
+    city_state_zip: "Cupertino, CA 95014",
+    distance: "18.5 miles from venue",
+    href: "https://www.hilton.com/en/hotels/sjcchgi-hilton-garden-inn-cupertino/",
+  },
+  {
+    title: "Aloft Marriot",
+    phone_number: "800-588-2300", // EMPIRE TODAY
+    address: "28220 Park Avenue",
+    city_state_zip: "Cupertino, CA 95014",
+    distance: "17.6 miles from venue",
+    href: "https://www.marriott.com/en-us/hotels/sjcup-aloft-cupertino/overview/",
+  },
+  {
+    title: "DoubleTree Cambell Pruneyard Plaza",
+    phone_number: "655-488-1082",
+    address: "44501 Concatenate Canyon Rd",
+    city_state_zip: "Cupertino, CA 95014",
+    distance: "15.0 miles from venue",
+    href: "https://www.hilton.com/en/hotels/sjcppdt-doubletree-campbell-pruneyard-plaza/",
+  },
+];

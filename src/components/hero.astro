@@ -1,0 +1,50 @@
+---
+import { Picture } from "astro:assets";
+import landingImage from "assets/dean-landing-no-bg.png";
+import Link from "@components/ui/link.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<main
+  class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24">
+  <div class="py-6 md:order-1 hidden md:block">
+    <Picture
+      src={landingImage}
+      alt="Astronaut in the air"
+      widths={[200, 400, 600]}
+      width={600}
+      height={600}
+      formats={['avif', 'webp']}
+      loading="eager"
+    />
+  </div>
+  <div>
+    <h1
+      class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter">
+      Cultivate Your Brand with Compelling Stories
+    </h1>
+    <p class="text-lg mt-4 text-slate-600 max-w-xl">
+      You've got the product, the people, and the vision to grow a successful business. Now all that's left is to craft the perfect story that will hook your target audience and help them understand why they need what you have to offer. That's where I come in.<wbr />
+    </p>
+    <div class="mt-6 flex flex-col sm:flex-row gap-3">
+      <Link
+        href="/contact"
+        class="flex gap-1 items-center justify-center"
+        rel="noopener">
+        <Icon class="text-white w-5 h-5" name="bx:bx-mail-send" />
+
+        Contact Me
+      </Link>
+      <Link
+        size="lg"
+        style="outline"
+        rel="noopener"
+        href="/about"
+        class="flex gap-1 items-center justify-center"
+        >
+        <Icon class="text-black w-4 h-4" name="bx:bxs-face" />
+        Learn More
+      </Link>
+    </div>
+  </div>
+</main>

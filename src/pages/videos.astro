@@ -1,0 +1,289 @@
+---
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+import Layout from "@layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+
+// Example video portfolio items
+const highlightReel = [
+  { src: "/videos/highlight-reel.mp4", alt: "Highlight Reel", orientation: "horizontal" },
+];
+
+const weddingVideos = [
+  { src: "/videos/2025-5-1 Tatiana and Johnny Wedding - Edit 2.3.19.mp4", alt: "Tatiana and Johnny", orientation: "horizontal" },
+  { src: "https://www.youtube.com/embed/YURWqTH_Qjw", alt: "Dom and Nicole", orientation: "horizontal", type: "youtube" },
+  { src: "https://www.youtube.com/embed/D3hYzdkPRfo", alt: "Claire and Taylor", orientation: "horizontal", type: "youtube" },
+  { src: "https://www.youtube.com/embed/ILGs6kNYPSs", alt: "Debbie and Curtis", orientation: "horizontal", type: "youtube" },
+  // Add more horizontal wedding videos here
+];
+
+const yelpVerticals = [
+  { src: "https://www.youtube.com/embed/S4ryQhjM-vg", alt: "Yelp - The Flower Fields", orientation: "vertical", type: "youtube" },
+  { src: "https://www.youtube.com/embed/OPnxxHnJIcE", alt: "Yelp - Rancho Guejito", orientation: "vertical", type: "youtube" },
+  { src: "https://www.youtube.com/embed/hGjnzrHYPKI", alt: "Yelp - Toasted Gastropub + Dinner", orientation: "vertical", type: "youtube" },
+  { src: "https://www.youtube.com/embed/SaZ7Rjn9Y18", alt: "Yelp - Halloween Event", orientation: "vertical", type: "youtube" },
+  { src: "https://www.youtube.com/embed/uzmutiXiA54", alt: "Yelp - Rooftop Cinema Club", orientation: "vertical", type: "youtube" },
+  { src: "https://www.youtube.com/embed/Ejiuovk-S3o", alt: "Yelp - Piper", orientation: "vertical", type: "youtube" },
+  // Add more vertical Yelp videos here
+];
+
+const businessPromos = [
+  { src: "/videos/2025-6-14 Farm Stand_4.mp4", alt: "The Farm Stand Poway", orientation: "vertical" },
+  { src: "/videos/2025-2-23 Yanni's Shoot 1.1_3.mp4", alt: "Yanni's", orientation: "vertical" },
+  { src: "/videos/video4.mp4", alt: "Business Promo Vertical", orientation: "vertical" },
+  // Add more vertical business promo videos here
+];
+
+const familyShoots = [
+  { src: "https://www.youtube.com/embed/losVklkTizw", alt: "Cori Baby Shower", orientation: "vertical", type: "youtube" },
+  { src: "https://www.youtube.com/embed/V3AnMvpFcTQ", alt: "Sarah Baby Shower", orientation: "vertical", type: "youtube" },
+  { src: "https://www.youtube.com/embed/LXpj0xoyqsk", alt: "Trish and Andrew Maternity", orientation: "vertical", type: "youtube" },
+  // Add more vertical family shoot videos here
+];
+---
+
+<Layout title="Videos">
+  <Container>
+    <Sectionhead>
+      <Fragment slot="title">Videos</Fragment>
+      <Fragment slot="desc"></Fragment>
+    </Sectionhead>
+
+    <div class="max-w-4xl mx-auto mb-16 px-4 mt-12">
+      <h3 class="text-2xl font-semibold mb-4 text-[#F7F7F7] uppercase">My Journey Into Videography</h3>
+      <div class="text-[#F7F7F7] space-y-4">
+        <p>
+          My love for cameras began in high school, where I took photography classes and learned the fundamentals—from shooting film and developing in the darkroom to mastering digital photography and Photoshop editing. Those early experiences gave me a deep appreciation for the craft and technical side of visual storytelling.
+        </p>
+        <p>
+          In 2019, I bought a Sony camera that could shoot both photo and video, and a friend asked me to film their wedding. That experience changed everything. I fell in love with the entire process—capturing real moments, telling stories through motion, and creating something couples could cherish forever.
+        </p>
+        <p>
+          Since then, I've filmed a wide range of projects: Yelp events around San Diego, bridal showers, weddings, corporate events, corporate interviews, and social media videos for local businesses. I also love making home videos with my wife and our two boys—those personal moments mean the world to me.
+        </p>
+        <p>
+          Photography remains a passion as well. I've shot weddings, corporate events, maternity sessions, bridal showers, baby showers, family portraits, and even car photoshoots. Whether it's a still image or a moving picture, I'm all about capturing authentic moments that matter.
+        </p>
+      </div>
+    </div>
+
+    <div class="bg-[#353439] border border-[#555] rounded-lg py-8 px-6 my-8 max-w-3xl mx-auto text-center">
+      <p class="text-[#F7F7F7]">
+        For my complete portfolio and business inquiries, visit <a href="https://heylproductions.com/portfolio" target="_blank" rel="noopener" class="underline hover:text-white font-semibold">heylproductions.com/portfolio</a>.
+      </p>
+    </div>
+
+    <div class="mb-16 flex flex-col items-center">
+      <h2 class="text-2xl font-semibold mb-6 text-[#F7F7F7] text-center uppercase">Weddings</h2>
+      {/* First row: Tatiana and Johnny, full width */}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full justify-items-center mb-8">
+        <div class="col-span-1 md:col-span-3 video-item horizontal w-full flex flex-col items-center">
+          <iframe
+            class="w-full h-auto rounded shadow"
+            style="aspect-ratio: 16/9; max-width: 900px;"
+            src="https://www.youtube.com/embed/fy1jPwLMvgY"
+            title="Tatiana and Johnny Wedding"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+          <div class="mt-2 text-center text-sm text-[#F7F7F7]">Tatiana and Johnny</div>
+        </div>
+      </div>
+      {/* Next row: 3 wedding videos */}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full justify-items-center">
+        {weddingVideos
+          .filter(video => video.alt !== "Tatiana and Johnny")
+          .map(video => (
+            <div class={`video-item ${video.orientation} w-full flex flex-col items-center`}>
+              {video.type === "youtube" ? (
+                <iframe
+                  class="w-full h-auto rounded shadow"
+                  style="aspect-ratio: 16/9; max-width: 360px;"
+                  src={video.src}
+                  title={video.alt}
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                ></iframe>
+              ) : (
+                <video
+                  controls
+                  class="w-full h-auto rounded shadow"
+                  style="aspect-ratio: 16/9; max-width: 360px;"
+                >
+                  <source src={video.src} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              )}
+              <div class="mt-2 text-center text-sm text-[#F7F7F7]">{video.alt}</div>
+            </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="mb-16 flex flex-col items-center">
+      <h2 class="text-2xl font-semibold mb-6 text-[#F7F7F7] text-center uppercase">Yelp Vertical Reels</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full justify-items-center">
+        {yelpVerticals.map(video => (
+          <div class={`video-item ${video.orientation} w-full flex flex-col items-center`}>
+            {video.type === "youtube" ? (
+              <iframe
+                class="w-full h-auto rounded shadow"
+                style="aspect-ratio: 9/16; max-width: 360px;"
+                src={video.src}
+                title={video.alt}
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            ) : (
+              <video
+                controls
+                class="w-full h-auto rounded shadow"
+                style="aspect-ratio: 9/16; max-width: 360px;"
+              >
+                <source src={video.src} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            )}
+            <div class="mt-2 text-center text-sm text-[#F7F7F7]">{video.alt}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="mb-16 flex flex-col items-center">
+      <h2 class="text-2xl font-semibold mb-6 text-[#F7F7F7] text-center uppercase">Business Promo Videos</h2>
+      {/* Comfort & Peace Company Celebration - full width row */}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full justify-items-center mb-8">
+        <div class="col-span-1 md:col-span-3 video-item horizontal w-full flex flex-col items-center">
+          <iframe
+            class="w-full h-auto rounded shadow"
+            style="aspect-ratio: 16/9; max-width: 900px;"
+            src="https://www.youtube.com/embed/apkDlvlwsNk"
+            title="Comfort & Peace Company Celebration"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+          <div class="mt-2 text-center text-sm text-[#F7F7F7]">Comfort & Peace Company Celebration</div>
+        </div>
+      </div>
+      {/* Next row: 3 vertical business promo videos */}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full justify-items-center">
+        <div class="video-item vertical w-full flex flex-col items-center">
+          <iframe
+            class="w-full h-auto rounded shadow"
+            style="aspect-ratio: 9/16; max-width: 360px;"
+            src="https://www.youtube.com/embed/xLpli9My15w"
+            title="Pretty Petals SD"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+          <div class="mt-2 text-center text-sm text-[#F7F7F7]">Pretty Petals SD</div>
+        </div>
+        <div class="video-item vertical w-full flex flex-col items-center">
+          <iframe
+            class="w-full h-auto rounded shadow"
+            style="aspect-ratio: 9/16; max-width: 360px;"
+            src="https://www.youtube.com/embed/vbdF2oStSxA"
+            title="Dirty Dough"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+          <div class="mt-2 text-center text-sm text-[#F7F7F7]">Dirty Dough</div>
+        </div>
+        <div class="video-item vertical w-full flex flex-col items-center">
+          <iframe
+            class="w-full h-auto rounded shadow"
+            style="aspect-ratio: 9/16; max-width: 360px;"
+            src="https://www.youtube.com/embed/b36Eq_4GItc"
+            title="The Lookout At Lake Poway"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+          <div class="mt-2 text-center text-sm text-[#F7F7F7]">The Lookout At Lake Poway</div>
+        </div>
+      </div>
+    </div>
+    <div class="mb-16 flex flex-col items-center">
+      <h2 class="text-2xl font-semibold mb-6 text-[#F7F7F7] text-center uppercase">Family Video Shoots</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full justify-items-center">
+        {familyShoots.map(video => (
+          <div class={`video-item ${video.orientation} w-full flex flex-col items-center`}>
+            {video.type === "youtube" ? (
+              <iframe
+                class="w-full h-auto rounded shadow"
+                style="aspect-ratio: 9/16; max-width: 360px;"
+                src={video.src}
+                title={video.alt}
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            ) : (
+              <video
+                controls
+                class="w-full h-auto rounded shadow"
+                style="aspect-ratio: 9/16; max-width: 360px;"
+              >
+                <source src={video.src} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            )}
+            <div class="mt-2 text-center text-sm text-[#F7F7F7]">{video.alt}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </Container>
+
+  <footer class="bg-[#26262a] text-[#F7F7F7] py-16 mt-12">
+    <Container>
+      <div class="flex flex-col md:flex-row items-center justify-center gap-8 w-full max-w-4xl mx-auto">
+        <div class="w-full md:w-auto text-center md:text-left">
+          <span class="font-light">Based in:</span> San Diego, California
+        </div>
+        <nav class="flex gap-6 w-full md:w-auto justify-center">
+          <a href="/" class="hover:underline hover:text-white uppercase">Home</a>
+          <a href="/videos" class="hover:underline hover:text-white uppercase">Videos</a>
+          <a href="/dj" class="hover:underline hover:text-white uppercase">DJ</a>
+          <a href="/contact" class="hover:underline hover:text-white uppercase">Contact</a>
+        </nav>
+        <div class="flex gap-3 justify-center w-full md:w-auto">
+          <a href="https://instagram.com/erickheyl" aria-label="Instagram" target="_blank" rel="noopener" class="hover:scale-110 transition-transform">
+            <Icon name="mdi:instagram" class="w-6 h-6" />
+            <span class="sr-only">@erickheyl</span>
+          </a>
+          <a href="#" aria-label="YouTube" class="hover:scale-110 transition-transform"><Icon name="mdi:youtube" class="w-6 h-6" /></a>
+          <a 
+            href="mailto:erick@erickheyl.com" 
+            aria-label="Email Erick" 
+            target="_blank" 
+            rel="noopener"
+            class="hover:scale-110 transition-transform"
+          >
+            <Icon name="mdi:email" class="w-6 h-6" />
+            <span class="sr-only">Email Erick</span>
+          </a>
+        </div>
+      </div>
+    </Container>
+  </footer>
+</Layout>
+
+<style>
+.video-item.vertical video {
+  max-width: 360px;
+  aspect-ratio: 9/16;
+  margin-left: auto;
+  margin-right: auto;
+}
+.video-item.horizontal video {
+  aspect-ratio: 16/9;
+}
+</style>

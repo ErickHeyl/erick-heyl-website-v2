@@ -1,0 +1,68 @@
+---
+// @ts-ignore
+import { Icon } from "astro-icon/components";
+
+const features = [
+  {
+    title: "SEO",
+    description:
+      "The most compelling, well-researched, thorough copywriting won't generate leads if it doesn't bring in traffic. I'll use the most modern tools and techniques to ensure your website is always moving up the SERP rankings.",
+    icon: "bx:bx-search",
+  },
+  {
+    title: "Blogs",
+    description:
+      "Buyers appreciate being able to learn about you and your product before they make any commitments. I'll focus on delivering value to shoppers, curating your brand image, and developing your voice through comprehensive SEO blogs.",
+    icon: "bx:bx-detail",
+  },
+  {
+    title: "Content Strategy",
+    description:
+      "I can help you lay the foundation for a successful content marketing campaign. This includes buyer personas, comprehensive buyer journeys, actionable topic ideas, SEO and style guidelines.",
+    icon: "bx:bxs-chess",
+  },
+  {
+    title: "Consulting",
+    description:
+      "Looking for advice or guidance on developing your own copywriting skills? Let's talk. I can help you develop your writing voice, streamline research, and master the discovery call.",
+    icon: "bx:bx-chalkboard",
+  },
+  {
+    title: "Ghost Writing",
+    description:
+      "Being seen as an industry thought-leader can bring credibility and status that is attractive to buyers. I'll work with C-Suite and senior management at your company to craft professional articles that we can pitch to industry publications to launch your reputation.",
+    icon: "bx:bx-ghost",
+  },
+  {
+    title: "Email Copy",
+    description:
+      "In the age of digital marketing, emails are king! I'll work with you to create clickable headlines, engaging short-form content, and help you get the most out of that email list.",
+    icon: "bx:bx-envelope",
+  },
+];
+---
+
+<div class="mt-16 md:mt-0">
+  <h2 class="text-4xl lg:text-5xl font-bold lg:tracking-tight">
+    Content marketing for any industry
+  </h2>
+  <p class="text-lg mt-4 text-slate-600">
+    I'll help you get the most out of your content--not just gaming SEO, but providing real value to your visitors.
+  </p>
+</div>
+
+<div class="grid sm:grid-cols-2 md:grid-cols-3 mt-16 gap-16">
+  {
+    features.map((item) => (
+      <div class="flex gap-4 items-start">
+        <div class="mt-1 bg-black rounded-full  p-2 w-8 h-8 shrink-0">
+          <Icon class="text-white" name={item.icon} />
+        </div>
+        <div>
+          <h3 class="font-semibold text-lg">{item.title}</h3>{" "}
+          <p class="text-slate-500 mt-2 leading-relaxed">{item.description}</p>
+        </div>
+      </div>
+    ))
+  }
+</div>

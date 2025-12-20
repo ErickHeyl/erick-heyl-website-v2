@@ -1,0 +1,177 @@
+---
+import { getCollection } from "astro:content";
+import { Picture } from "astro:assets";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+import Link from "@components/ui/link.astro";
+import { Icon } from "astro-icon/components";
+import profileImage from "assets/heyl-productions-export-10.png"; // Updated image import
+
+// Filter team entries with 'draft: false' & date before current date
+const publishedTeamMembers = await getCollection("team", ({ data }) => {
+  return !data.draft && data.publishDate < new Date();
+});
+---
+
+<Layout title="About">
+  <Container>
+    <Sectionhead>
+      <Fragment slot="title">About</Fragment>
+      <Fragment slot="desc"></Fragment>
+    </Sectionhead>
+
+    <div class="flex flex-col gap-6 mx-auto max-w-4xl mt-16">
+      <h2 class="font-bold text-3xl text-[#F7F7F7] mb-2">
+        San Diego Videographer & DJ
+      </h2>
+      <p class="text-lg leading-relaxed text-[#F7F7F7]">
+        I'm Erick Heyl, a born and raised San Diego native with a passion for videography and music. What started as a love for capturing moments has grown into a career helping couples, businesses, and events come to life through video and sound.
+      </p>
+      <p class="text-lg leading-relaxed text-[#F7F7F7]">
+        Cinematic wedding videography is how I got my start. My passion is capturing the emotion, beauty, and story of your special day so you can relive those moments for years to come. From intimate elopements to grand celebrations, I specialize in cinematic wedding films that are as unique as each couple.
+      </p>
+      <p class="text-lg leading-relaxed text-[#F7F7F7]">
+        I fell in love with videography several years ago and quickly realized I could use it to support my growing family while providing valuable services to the community I call home. As a professional DJ, I also bring energy and the perfect soundtrack to events, creating unforgettable experiences for guests.
+      </p>
+      <p class="text-lg leading-relaxed text-[#F7F7F7]">
+        Since then, I've served a rapidly growing number of San Diego couples and businesses, from beautiful weddings across Southern California to local shops like Pretty Petals, Dirty Dough, and large corporate events like Yelp's.
+      </p>
+      <div class="flex flex-row gap-4 justify-center items-center my-6">
+        <Picture
+          src="/assets/Erick+Sammie-Wedding.jpg"
+          alt="Erick working"
+          widths={[150, 200]}
+          width={200}
+          height={200}
+          formats={['avif', 'webp']}
+          class="rounded-md shadow object-cover"
+        />
+        <Picture
+          src="/assets/Erick+Sammie-Yelp-Crop.JPG"
+          alt="Sammie working"
+          widths={[150, 200]}
+          width={200}
+          height={200}
+          formats={['avif', 'webp']}
+          class="rounded-md shadow object-cover"
+        />
+        <Picture
+          src="/assets/Erick+Sammie-bridal.jpg"
+          alt="Erick and Sammie together"
+          widths={[150, 200]}
+          width={200}
+          height={200}
+          formats={['avif', 'webp']}
+          class="rounded-md shadow object-cover"
+        />
+      </div>
+
+      <h3 class="font-bold text-2xl text-[#F7F7F7] mt-6">
+        What Sets Me Apart
+      </h3>
+      <p class="text-lg leading-relaxed text-[#F7F7F7]">
+        As an independent professional, I bring a personal touch to every project. I not only know and love the San Diego area, but I'm personally invested in seeing the community and its local businesses grow stronger.
+      </p>
+
+      <h3 class="font-bold text-2xl text-[#F7F7F7] mt-6">
+        A Friendly Face Behind the Camera
+      </h3>
+      <p class="text-lg leading-relaxed text-[#F7F7F7]">
+        I'll get the job done on time and within budget. But just as important to me is making sure you enjoy the process as much as I do.
+      </p>
+      <p class="text-lg leading-relaxed text-[#F7F7F7]">
+        I'll get to know you, your business, products, and vision, and use everything at my disposal to produce a video or event experience that helps you achieve your goals.
+      </p>
+
+      <h3 class="font-bold text-2xl text-[#F7F7F7] mt-6">
+        What Our Past Clients Have Said…
+      </h3>
+      <p class="text-lg leading-relaxed text-[#F7F7F7]">
+        I've been lucky to work with San Diego businesses and couples of all kinds, and am proud to hear glowing reviews:
+      </p>
+      <blockquote class="border-l-4 border-[#F7F7F7] pl-4 italic text-[#F7F7F7] mb-6">
+        "Erick and Sam were absolutely amazing to work with! From start to finish, they made the entire process so easy and enjoyable. The videos turned out beautifully—far beyond my expectations—and perfectly captured the heart of the event. Throughout the day, they were incredibly professional, attentive, and helpful, making sure every moment was documented in the best way possible. I couldn’t be happier with the final result and highly recommend them to anyone looking for a talented and dedicated videography team!" -- Tatiana & Johnny Wedding
+      </blockquote>
+      <blockquote class="border-l-4 border-[#F7F7F7] pl-4 italic text-[#F7F7F7] mb-6">
+        "[After wathching their wedding video] Okay, I couldn’t wait. That’s the most beautiful video I’ve ever seen in my life. I’m crying like a baby. Words cannot express how thankful I am. This is amazing. Thank you thank you thank you!!!!
+😭😭😭 we are obsessed and we are all crying like babies over here! Hahaha
+You’re seriously amazing! We are extremely grateful! ❤️❤️❤️ -- Dom and Nicole Wedding
+      </blockquote>
+
+      <h3 class="font-bold text-2xl text-[#F7F7F7] mt-6">
+        Looking For a Videographer or DJ Who Cares About Your Project? Let's Talk.
+      </h3>
+      <div class="flex flex-col items-center">
+        <p class="text-lg leading-relaxed text-[#F7F7F7] text-center mb-4">
+          Fill out my contact form today and let's get started turning your vision into reality.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-10 mx-auto max-w-4xl mt-12">
+      <div></div>
+      {
+        publishedTeamMembers.map((teamMemberEntry) => (
+          <div class="group">
+            <div class="w-full aspect-square">
+              <Picture
+                src={profileImage}
+                alt={teamMemberEntry.data.avatar.alt}
+                widths={[200, 400]}
+                width={400}
+                height={400}
+                formats={['avif', 'webp']}
+                class="w-full rounded-md rounded transition group-hover:-translate-y-1 group-hover:shadow-xl object-cover"
+              />
+            </div>
+            <div class="mt-4 text-center">
+              <Link
+                href="/contact"
+                class="flex gap-1 items-center justify-center"
+                rel="noopener">
+                <Icon class="text-white w-5 h-5" name="bx:bx-mail-send" />
+                Contact Us
+              </Link>
+            </div>
+          </div>
+        ))
+      }
+      <div></div>
+    </div>
+  </Container>
+
+  <footer class="bg-[#26262a] text-[#F7F7F7] py-16 mt-12">
+    <Container>
+      <div class="flex flex-col md:flex-row items-center justify-center gap-8 w-full max-w-4xl mx-auto">
+        <div class="w-full md:w-auto text-center md:text-left">
+          <span class="font-light">Based in:</span> San Diego, California
+        </div>
+        <nav class="flex gap-6 w-full md:w-auto justify-center">
+          <a href="/" class="hover:underline hover:text-white uppercase">Home</a>
+          <a href="/videos" class="hover:underline hover:text-white uppercase">Videos</a>
+          <a href="/dj" class="hover:underline hover:text-white uppercase">DJ</a>
+          <a href="/contact" class="hover:underline hover:text-white uppercase">Contact</a>
+        </nav>
+        <div class="flex gap-3 justify-center w-full md:w-auto">
+          <a href="https://instagram.com/erickheyl" aria-label="Instagram" target="_blank" rel="noopener" class="hover:scale-110 transition-transform">
+            <Icon name="mdi:instagram" class="w-6 h-6" />
+            <span class="sr-only">@erickheyl</span>
+          </a>
+          <a href="#" aria-label="YouTube" class="hover:scale-110 transition-transform"><Icon name="mdi:youtube" class="w-6 h-6" /></a>
+          <a 
+            href="mailto:erick@erickheyl.com" 
+            aria-label="Email Erick" 
+            target="_blank" 
+            rel="noopener"
+            class="hover:scale-110 transition-transform"
+          >
+            <Icon name="mdi:email" class="w-6 h-6" />
+            <span class="sr-only">Email Erick</span>
+          </a>
+        </div>
+      </div>
+    </Container>
+  </footer>
+</Layout>
+

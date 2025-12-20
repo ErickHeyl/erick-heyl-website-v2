@@ -1,0 +1,455 @@
+---
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+import Layout from "@layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<Layout title="DJ Mixes">
+  <Container>
+    <Sectionhead>
+      <Fragment slot="title">DJ Mixes</Fragment>
+      <Fragment slot="desc">My recorded mixes and DJ projects</Fragment>
+    </Sectionhead>
+
+    <div class="flex flex-col gap-8 mx-auto max-w-4xl mt-16">
+      <div class="text-center">
+        <h2 class="font-bold text-3xl text-[#F7F7F7] mb-6">
+          A Passion for Music & Mixing
+        </h2>
+        <p class="text-lg leading-relaxed text-[#F7F7F7] mb-8">
+          DJing is a creative outlet where I explore different genres, craft seamless transitions, and share my love for music. Here you'll find my recorded mixes and sets—everything from house and techno to hip-hop and throwback classics.
+        </p>
+      </div>
+
+      <div class="bg-[#353439] border border-[#555] rounded-lg p-8 my-8">
+        <h3 class="font-bold text-2xl text-[#F7F7F7] mb-6 text-center">Recent Mixes</h3>
+        
+        <div class="space-y-6">
+          {/* E.Heyl 35th Birthday Mix - Local MP3 - NEWEST */}
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a] overflow-hidden relative">
+            <div class="absolute inset-0 opacity-20">
+              <img 
+                src="/pictures/erick-35th-bday-mix-screenshot.png" 
+                alt="35th Birthday Mix Artwork" 
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div class="relative z-10">
+              <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">35th Birthday Mix</h4>
+              <p class="text-[#cccccc] text-sm mb-4">House & Dance • 2025</p>
+              <audio controls class="w-full">
+                <source src="/mixes/E.Heyl-35th-birthday-mix.mp3" type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+              <p class="text-[#cccccc] mt-3">A celebratory mix recorded for my 35th birthday celebration.</p>
+            </div>
+          </div>
+
+          {/* Lobby Coders Series - SoundCloud then Mixcloud */}
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">Lobby Coders #14</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Mix Series • 2024</p>
+            <iframe 
+              width="100%" 
+              height="166" 
+              scrolling="no" 
+              frameborder="no" 
+              allow="autoplay" 
+              src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/e-heyl-001/2024-3-14-lobbycoders-14&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://soundcloud.com/e-heyl-001/2024-3-14-lobbycoders-14" 
+                target="_blank" 
+                rel="noopener"
+                class="text-orange-600 hover:underline text-sm"
+              >
+                View on SoundCloud →
+              </a>
+            </div>
+          </div>
+
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">Lobby Coders #13</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Mix Series • 2024</p>
+            <iframe 
+              width="100%" 
+              height="166" 
+              scrolling="no" 
+              frameborder="no" 
+              allow="autoplay" 
+              src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/e-heyl-001/lobbycoders13&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://soundcloud.com/e-heyl-001/lobbycoders13" 
+                target="_blank" 
+                rel="noopener"
+                class="text-orange-600 hover:underline text-sm"
+              >
+                View on SoundCloud →
+              </a>
+            </div>
+          </div>
+
+          {/* Mixcloud Mixes - Lobby Coders #11 down to #1 */}
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">Lobby Coders #11</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Mix Series • 2023</p>
+            <iframe 
+              width="100%" 
+              height="120" 
+              src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Feheyl%2Flobbycoders11%2F" 
+              frameborder="0"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://www.mixcloud.com/eheyl/lobbycoders11/" 
+                target="_blank" 
+                rel="noopener"
+                class="text-[#6b9eff] hover:underline text-sm"
+              >
+                View on Mixcloud →
+              </a>
+            </div>
+          </div>
+
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">Lobby Coders #10</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Mix Series • 2023</p>
+            <iframe 
+              width="100%" 
+              height="120" 
+              src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Feheyl%2Flobbycoders10%2F" 
+              frameborder="0"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://www.mixcloud.com/eheyl/lobbycoders10/" 
+                target="_blank" 
+                rel="noopener"
+                class="text-[#6b9eff] hover:underline text-sm"
+              >
+                View on Mixcloud →
+              </a>
+            </div>
+          </div>
+
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">Lobby Coders #8</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Mix Series • 2023</p>
+            <iframe 
+              width="100%" 
+              height="120" 
+              src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Feheyl%2Flobbycodders008%2F" 
+              frameborder="0"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://www.mixcloud.com/eheyl/lobbycodders008/" 
+                target="_blank" 
+                rel="noopener"
+                class="text-[#6b9eff] hover:underline text-sm"
+              >
+                View on Mixcloud →
+              </a>
+            </div>
+          </div>
+
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">Lobby Coders #7</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Mix Series • 2023</p>
+            <iframe 
+              width="100%" 
+              height="120" 
+              src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Feheyl%2Flobbycoders7%2F" 
+              frameborder="0"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://www.mixcloud.com/eheyl/lobbycoders7/" 
+                target="_blank" 
+                rel="noopener"
+                class="text-[#6b9eff] hover:underline text-sm"
+              >
+                View on Mixcloud →
+              </a>
+            </div>
+          </div>
+
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">Lobby Coders #5</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Mix Series • 2022</p>
+            <iframe 
+              width="100%" 
+              height="120" 
+              src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Feheyl%2Flobbycoders5%2F" 
+              frameborder="0"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://www.mixcloud.com/eheyl/lobbycoders5/" 
+                target="_blank" 
+                rel="noopener"
+                class="text-[#6b9eff] hover:underline text-sm"
+              >
+                View on Mixcloud →
+              </a>
+            </div>
+          </div>
+
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">Lobby Coders #4</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Mix Series • 2022</p>
+            <iframe 
+              width="100%" 
+              height="120" 
+              src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Feheyl%2Flobbycoders4%2F" 
+              frameborder="0"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://www.mixcloud.com/eheyl/lobbycoders4/" 
+                target="_blank" 
+                rel="noopener"
+                class="text-[#6b9eff] hover:underline text-sm"
+              >
+                View on Mixcloud →
+              </a>
+            </div>
+          </div>
+
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">Lobby Coders #2</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Mix Series • 2022</p>
+            <iframe 
+              width="100%" 
+              height="120" 
+              src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Feheyl%2Flobbycoders2%2F" 
+              frameborder="0"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://www.mixcloud.com/eheyl/lobbycoders2/" 
+                target="_blank" 
+                rel="noopener"
+                class="text-[#6b9eff] hover:underline text-sm"
+              >
+                View on Mixcloud →
+              </a>
+            </div>
+          </div>
+
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">Lobby Coders #1</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Mix Series • 2022</p>
+            <iframe 
+              width="100%" 
+              height="120" 
+              src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Feheyl%2Flobbycoders1%2F" 
+              frameborder="0"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://www.mixcloud.com/eheyl/lobbycoders1/" 
+                target="_blank" 
+                rel="noopener"
+                class="text-[#6b9eff] hover:underline text-sm"
+              >
+                View on Mixcloud →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[#353439] border border-[#555] rounded-lg p-8 my-8">
+        <h3 class="font-bold text-2xl text-[#F7F7F7] mb-6 text-center">FriendZone Essential Mix</h3>
+        <p class="text-[#F7F7F7] text-center mb-6">
+          I recently had the honor of recording an Essential Mix for my friend Jerry and his FriendZone podcast series. The Essential Mix is a legendary mix series by Pete Tong where an artist gets 2 hours to play a set of their essential songs. I spent a lot of time carefully curating my setlist to include all the songs that my friends and I loved over the years. This was also my first experience using Ableton to create a continuous mix. Huge thanks to Tony and Jerry for the amazing intro!
+        </p>
+        
+        <div class="space-y-6">
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">FRNDZN026 - E.Heyl presents TSFG</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Essential Mix • FriendZone Podcast</p>
+            <iframe 
+              width="100%" 
+              height="120" 
+              src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Fthefriendzone%2Ffrndzn026-e-heyl-pres-tsfg%2F" 
+              frameborder="0"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://www.mixcloud.com/thefriendzone/frndzn026-e-heyl-pres-tsfg/" 
+                target="_blank" 
+                rel="noopener"
+                class="text-[#6b9eff] hover:underline text-sm"
+              >
+                View on Mixcloud →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[#353439] border border-[#555] rounded-lg p-8 my-8">
+        <h3 class="font-bold text-2xl text-[#F7F7F7] mb-6 text-center">The SoundCloud Era (10+ Years Ago)</h3>
+        <p class="text-[#F7F7F7] text-center mb-6">Some of my earliest recorded mixes from over a decade ago.</p>
+        
+        <div class="space-y-6">
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">Just For The Freaks</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Classic Mix • 10+ years ago</p>
+            <iframe 
+              width="100%" 
+              height="166" 
+              scrolling="no" 
+              frameborder="no" 
+              allow="autoplay" 
+              src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/e-heyl/justforthefreaks&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://soundcloud.com/e-heyl/justforthefreaks" 
+                target="_blank" 
+                rel="noopener"
+                class="text-orange-600 hover:underline text-sm"
+              >
+                View on SoundCloud →
+              </a>
+            </div>
+          </div>
+
+          <div class="border border-[#555] rounded-lg p-6 bg-[#26262a]">
+            <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">Food For Thot</h4>
+            <p class="text-[#cccccc] text-sm mb-4">Classic Mix • 10+ years ago</p>
+            <iframe 
+              width="100%" 
+              height="166" 
+              scrolling="no" 
+              frameborder="no" 
+              allow="autoplay" 
+              src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/e-heyl/foodforthot-1&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+              class="rounded"
+            ></iframe>
+            <div class="mt-3">
+              <a 
+                href="https://soundcloud.com/e-heyl/foodforthot-1" 
+                target="_blank" 
+                rel="noopener"
+                class="text-orange-600 hover:underline text-sm"
+              >
+                View on SoundCloud →
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-6">
+          <a 
+            href="https://soundcloud.com/e-heyl/tracks" 
+            target="_blank" 
+            rel="noopener"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded shadow hover:bg-orange-600 transition"
+          >
+            <Icon name="mdi:soundcloud" class="w-5 h-5" />
+            View All Classic Mixes on SoundCloud
+          </a>
+        </div>
+      </div>
+
+      <div class="bg-[#1a1a1d] border border-[#444] rounded-lg p-6 my-8">
+        <div class="flex items-start gap-3">
+          <Icon name="mdi:information" class="w-6 h-6 text-[#6b9eff] flex-shrink-0 mt-1" />
+          <div>
+            <h3 class="font-semibold text-lg text-[#F7F7F7] mb-2">Available for Events</h3>
+            <p class="text-[#cccccc]">
+              While DJing is primarily a hobby and creative passion, I'm open to spinning at select events. If you're interested in booking me for your wedding, party, or event, feel free to <a href="/contact" class="text-[#6b9eff] hover:underline font-medium">get in touch</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center my-8">
+        <h3 class="font-bold text-xl text-[#F7F7F7] mb-3">Find More Mixes</h3>
+        <div class="flex gap-4 justify-center flex-wrap">
+          <a 
+            href="https://soundcloud.com/e-heyl-001" 
+            target="_blank" 
+            rel="noopener"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded shadow hover:bg-orange-600 transition"
+          >
+            <Icon name="mdi:soundcloud" class="w-5 h-5" />
+            Latest SoundCloud
+          </a>
+          <a 
+            href="https://www.mixcloud.com/eheyl/" 
+            target="_blank" 
+            rel="noopener"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-gray-800 text-white rounded shadow hover:bg-gray-700 transition"
+          >
+            <Icon name="mdi:cloud-outline" class="w-5 h-5" />
+            Mixcloud Profile
+          </a>
+          <a 
+            href="https://soundcloud.com/e-heyl/tracks" 
+            target="_blank" 
+            rel="noopener"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded shadow hover:bg-orange-700 transition"
+          >
+            <Icon name="mdi:soundcloud" class="w-5 h-5" />
+            Classic SoundCloud
+          </a>
+        </div>
+      </div>
+    </div>
+  </Container>
+
+  <footer class="bg-[#26262a] text-[#F7F7F7] py-16 mt-12">
+    <Container>
+      <div class="flex flex-col md:flex-row items-center justify-center gap-8 w-full max-w-4xl mx-auto">
+        <div class="w-full md:w-auto text-center md:text-left">
+          <span class="font-light">Based in:</span> San Diego, California
+        </div>
+        <nav class="flex gap-6 w-full md:w-auto justify-center">
+          <a href="/" class="hover:underline hover:text-white uppercase">Home</a>
+          <a href="/videos" class="hover:underline hover:text-white uppercase">Videos</a>
+          <a href="/dj" class="hover:underline hover:text-white uppercase">DJ</a>
+          <a href="/contact" class="hover:underline hover:text-white uppercase">Contact</a>
+        </nav>
+        <div class="flex gap-3 justify-center w-full md:w-auto">
+          <a href="https://instagram.com/erickheyl" aria-label="Instagram" target="_blank" rel="noopener" class="hover:scale-110 transition-transform">
+            <Icon name="mdi:instagram" class="w-6 h-6" />
+            <span class="sr-only">@erickheyl</span>
+          </a>
+          <a href="#" aria-label="YouTube" class="hover:scale-110 transition-transform"><Icon name="mdi:youtube" class="w-6 h-6" /></a>
+          <a 
+            href="mailto:erick@erickheyl.com" 
+            aria-label="Email Erick" 
+            target="_blank" 
+            rel="noopener"
+            class="hover:scale-110 transition-transform"
+          >
+            <Icon name="mdi:email" class="w-6 h-6" />
+            <span class="sr-only">Email Erick</span>
+          </a>
+        </div>
+      </div>
+    </Container>
+  </footer>
+</Layout>
+
