@@ -23,9 +23,9 @@ export const party = {
    * Vertical (9:16) background video, e.g. a Vercel Blob URL. Set to null to hide.
    * Keep it short, muted-friendly and small (aim for under ~10 MB).
    */
-  videoUrl: null as string | null,
+  videoUrl: "https://pwzn8zm3ydesrveo.public.blob.vercel-storage.com/2025-12-6%20E.mp4" as string | null,
   /** Optional still image shown while the video loads (and for reduced-motion users). */
-  videoPoster: null as string | null,
+  videoPoster: "/dj/birthday-bg-poster.jpg" as string | null,
   /** Set to false after the party to stop new requests and upvotes. */
   requestsOpen: true,
 } as const;
