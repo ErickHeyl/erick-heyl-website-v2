@@ -7,7 +7,7 @@ import vercel from "@astrojs/vercel/serverless";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://heylproductions.vercel.app",
+  site: "https://www.erickheyl.com",
   // "hybrid": every page stays prerendered (static) unless it opts out with
   // `export const prerender = false` (only the song-request page + its API routes do).
   output: "hybrid",
