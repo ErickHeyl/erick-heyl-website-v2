@@ -2,6 +2,7 @@
 import Container from "@components/container.astro";
 import Sectionhead from "@components/sectionhead.astro";
 import Layout from "@layouts/Layout.astro";
+import VideoBackground from "@components/VideoBackground.astro";
 import { Icon } from "astro-icon/components";
 import { party } from "../../data/party";
 import { getAdminToken } from "../../lib/env";
@@ -29,6 +30,7 @@ Astro.response.headers.set("Cache-Control", "no-store");
 ---
 
 <Layout title={`Song Requests · ${party.title}`}>
+  {party.videoUrl && <VideoBackground src={party.videoUrl} poster={party.videoPoster ?? undefined} />}
   <Container>
     <Sectionhead>
       <Fragment slot="title">Song Requests</Fragment>
@@ -56,11 +58,38 @@ Astro.response.headers.set("Cache-Control", "no-store");
       )}
 
       <!-- Request form -->
-      <section class="bg-[#353439] border border-[#555] rounded-lg p-5 sm:p-8">
+      <section class="bg-[#353439]/85 backdrop-blur-md border border-[#555] rounded-lg p-5 sm:p-8">
         <p class="text-[#cccccc] mb-6 text-center">{party.blurb}</p>
 
         {party.requestsOpen ? (
           <form id="sr-form" class="space-y-4" novalidate autocomplete="off">
+            <div class="grid grid-cols-2 rounded-lg border border-[#555] overflow-hidden" role="group" aria-label="What are you requesting?">
+              <button type="button" data-kind="song" aria-pressed="true" class="sr-kind inline-flex items-center justify-center gap-2 px-4 py-3 font-semibold">
+                <Icon name="mdi:music-note" class="w-5 h-5" /> A song
+              </button>
+              <button type="button" data-kind="vibe" aria-pressed="false" class="sr-kind inline-flex items-center justify-center gap-2 px-4 py-3 font-semibold border-l border-[#555]">
+                <Icon name="mdi:creation" class="w-5 h-5" /> A vibe
+              </button>
+            </div>
+
+            <!-- Vibe / genre request -->
+            <div id="sr-vibe" hidden>
+              <label for="sr-vibe-input" class="block text-sm font-semibold text-[#F7F7F7] mb-2">What vibe or genre?</label>
+              <input
+                id="sr-vibe-input"
+                type="text"
+                maxlength={LIMITS.vibe}
+                enterkeyhint="send"
+                placeholder="e.g. 90s R&B, Afrobeats, sing-alongs…"
+                class="w-full bg-[#26262a] border border-[#555] rounded-lg px-4 py-3.5 text-lg text-[#F7F7F7] placeholder-[#888] focus:outline-none focus:border-orange-600 focus:ring-1 focus:ring-orange-600"
+              />
+              <div class="flex flex-wrap gap-2 mt-3" aria-label="Quick picks">
+                {party.vibeSuggestions.map((v) => (
+                  <button type="button" data-vibe={v} aria-pressed="false" class="sr-vibe-chip px-3 py-2 rounded-full border border-[#555] text-sm text-[#F7F7F7] bg-[#26262a] hover:border-orange-600">{v}</button>
+                ))}
+              </div>
+            </div>
+
             <div class="relative" id="sr-search-wrap">
               <label for="sr-search" class="block text-sm font-semibold text-[#F7F7F7] mb-2">Find a song</label>
               <div class="relative">
@@ -145,8 +174,17 @@ Astro.response.headers.set("Cache-Control", "no-store");
         )}
       </section>
 
+      <!-- Vibe list (hidden until someone requests a vibe) -->
+      <section id="sr-vibes-section" hidden class="bg-[#353439]/85 backdrop-blur-md border border-[#555] rounded-lg p-5 sm:p-8" aria-labelledby="sr-vibes-heading">
+        <h2 id="sr-vibes-heading" class="font-bold text-2xl text-[#F7F7F7] mb-1">
+          Vibes <span id="sr-vibes-count" class="text-base font-normal text-[#cccccc]"></span>
+        </h2>
+        <p class="text-sm text-[#cccccc] mb-5">Genres and moods guests want to hear. Upvote the ones you're feeling.</p>
+        <ul id="sr-vibes" class="space-y-3" aria-live="polite"></ul>
+      </section>
+
       <!-- Request list -->
-      <section class="bg-[#353439] border border-[#555] rounded-lg p-5 sm:p-8" aria-labelledby="sr-list-heading">
+      <section class="bg-[#353439]/85 backdrop-blur-md border border-[#555] rounded-lg p-5 sm:p-8" aria-labelledby="sr-list-heading">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
           <h2 id="sr-list-heading" class="font-bold text-2xl text-[#F7F7F7]">
             Requests <span id="sr-count" class="text-base font-normal text-[#cccccc]"></span>
@@ -180,6 +218,9 @@ Astro.response.headers.set("Cache-Control", "no-store");
   #song-requests [hidden] { display: none !important; }
   .sr-sort { color: #cccccc; background: #26262a; }
   .sr-sort[aria-pressed="true"] { color: #fff; background: #ea580c; }
+  .sr-kind { color: #cccccc; background: #26262a; }
+  .sr-kind[aria-pressed="true"] { color: #fff; background: #ea580c; }
+  .sr-vibe-chip[aria-pressed="true"] { border-color: #ea580c; background: rgba(234, 88, 12, 0.2); color: #fff; }
   #sr-toast.show { opacity: 1; transform: translate(-50%, 0); }
   #sr-results [aria-selected="true"] { background: #353439; }
 </style>

@@ -1,6 +1,7 @@
 /**
  * Normalization for duplicate detection. Two requests are duplicates when they
  * share an iTunes trackId, or when their normalized "artist|title" keys match.
+ * Vibes get their own key space so "Disco" the vibe never matches a song called "Disco".
  */
 
 const FEAT_PAREN_RE = /[\(\[]\s*(feat\.?|ft\.?|featuring|with)\s[^\)\]]*[\)\]]/gi;
@@ -29,12 +30,17 @@ export function textKey(title: string, artist: string): string {
   return `text:${normalizePart(artist)}|${normalizePart(title)}`;
 }
 
+export function vibeKey(text: string): string {
+  return `vibe:${normalizePart(text)}`;
+}
+
 export function trackKey(trackId: string | undefined): string | undefined {
   return trackId ? `track:${trackId}` : undefined;
 }
 
 /** All keys a request should be indexed under (trackId first when present). */
-export function dedupeKeys(req: { title: string; artist: string; trackId?: string }): string[] {
+export function dedupeKeys(req: { title: string; artist: string; trackId?: string; source?: string }): string[] {
+  if (req.source === "vibe") return [vibeKey(req.title)];
   const keys: string[] = [];
   const t = trackKey(req.trackId);
   if (t) keys.push(t);

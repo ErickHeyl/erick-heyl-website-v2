@@ -74,6 +74,22 @@ describe("validateRequestInput", () => {
     expect(padded.ok).toBe(true);
   });
 
+  it("accepts a vibe request, drops any artist and enforces the 60-char limit", () => {
+    const r = validateRequestInput({ source: "vibe", title: "  90s <b>R&B</b> ", artist: "ignored", requestedBy: "Nina" });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.value).toEqual({ source: "vibe", title: "90s R&B", artist: "", requestedBy: "Nina" });
+    expect(validateRequestInput({ source: "vibe", title: "x".repeat(60) }).ok).toBe(true);
+    const long = validateRequestInput({ source: "vibe", title: "x".repeat(61) });
+    expect(long.ok).toBe(false);
+    if (!long.ok) expect(long.errors.title).toMatch(/60/);
+    expect(validateRequestInput({ source: "vibe", title: "  " }).ok).toBe(false);
+  });
+
+  it("masks profanity in vibe text", () => {
+    const r = validateRequestInput({ source: "vibe", title: "shit that slaps" });
+    expect(r.ok && r.value.title).toBe("s*** that slaps");
+  });
+
   it("rejects missing/blank title, bad source and missing trackId", () => {
     expect(validateRequestInput({ source: "custom", title: "   " }).ok).toBe(false);
     expect(validateRequestInput({ source: "custom", title: "<b></b>" }).ok).toBe(false);

@@ -72,6 +72,8 @@ function icon(path: string, cls: string): SVGSVGElement {
 }
 const ICON_UP = "M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z";
 const ICON_NOTE = "M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6Z";
+const ICON_VIBE =
+  "m19 1l-1.26 2.75L15 5l2.74 1.26L19 9l1.25-2.74L23 5l-2.75-1.25M9 4L6.5 9.5L1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5M19 15l-1.26 2.74L15 19l2.74 1.25L19 23l1.25-2.75L23 19l-2.75-1.26";
 
 let toastTimer: number | undefined;
 function toast(message: string) {
@@ -111,16 +113,27 @@ function sortLocal(items: SongRequest[]): SongRequest[] {
   });
 }
 
-function renderList() {
-  const list = $("sr-list")!;
-  const items = sortLocal(requests);
+const countLabel = (items: SongRequest[]) => {
   const active = items.filter((r) => r.status === "pending").length;
-  $("sr-count")!.textContent = items.length ? `(${active} queued${items.length > active ? `, ${items.length - active} done` : ""})` : "";
-  $("sr-empty")!.hidden = items.length > 0;
-  list.replaceChildren(...items.map(renderItem));
+  return items.length ? `(${active} queued${items.length > active ? `, ${items.length - active} done` : ""})` : "";
+};
+
+function renderList() {
+  const all = sortLocal(requests);
+  const songs = all.filter((r) => r.source !== "vibe");
+  const vibes = all.filter((r) => r.source === "vibe");
+
+  $("sr-count")!.textContent = countLabel(songs);
+  $("sr-empty")!.hidden = songs.length > 0;
+  $("sr-list")!.replaceChildren(...songs.map(renderItem));
+
+  $("sr-vibes-section")!.hidden = vibes.length === 0;
+  $("sr-vibes-count")!.textContent = countLabel(vibes);
+  $("sr-vibes")!.replaceChildren(...vibes.map(renderItem));
 }
 
 function renderItem(r: SongRequest): HTMLLIElement {
+  const isVibe = r.source === "vibe";
   const played = r.status === "played";
   const hidden = r.status === "hidden";
   const li = el(
@@ -141,7 +154,7 @@ function renderItem(r: SongRequest): HTMLLIElement {
     li.appendChild(img);
   } else {
     const ph = el("div", "w-14 h-14 rounded flex-shrink-0 bg-[#353439] flex items-center justify-center text-orange-600");
-    ph.appendChild(icon(ICON_NOTE, "w-7 h-7"));
+    ph.appendChild(icon(isVibe ? ICON_VIBE : ICON_NOTE, "w-7 h-7"));
     li.appendChild(ph);
   }
 
@@ -165,7 +178,7 @@ function renderItem(r: SongRequest): HTMLLIElement {
       return b;
     };
     controls.append(
-      btn(played ? "Unmark played" : "Mark played", () => adminSetStatus(r.id, played ? "pending" : "played")),
+      btn(played ? (isVibe ? "Unmark done" : "Unmark played") : isVibe ? "Mark done" : "Mark played", () => adminSetStatus(r.id, played ? "pending" : "played")),
       btn(hidden ? "Unhide" : "Hide", () => adminSetStatus(r.id, hidden ? "pending" : "hidden")),
       btn("Delete", () => adminDelete(r.id, li), "text-red-300 border-red-900"),
     );
@@ -275,9 +288,14 @@ function setupForm() {
   const errorBox = $("sr-form-error")!;
   const submit = $<HTMLButtonElement>("sr-submit")!;
   const searchWrap = $("sr-search-wrap")!;
+  const vibeBox = $("sr-vibe")!;
+  const vibeInput = $<HTMLInputElement>("sr-vibe-input")!;
+  const chips = [...document.querySelectorAll<HTMLButtonElement>(".sr-vibe-chip")];
+  const submitLabel = () => (kind === "vibe" ? "Request vibe" : "Request song");
 
   let selected: SongResult | null = null;
   let mode: "search" | "custom" = "search";
+  let kind: "song" | "vibe" = "song";
   let options: Array<{ kind: "song"; song: SongResult } | { kind: "custom" }> = [];
   let activeIndex = -1;
   let debounce: number | undefined;
@@ -362,9 +380,42 @@ function setupForm() {
 
   const setMode = (m: "search" | "custom") => {
     mode = m;
-    customBox.hidden = m !== "custom";
-    searchWrap.hidden = m === "custom" || !!selected;
+    const song = kind === "song";
+    customBox.hidden = !song || m !== "custom";
+    searchWrap.hidden = !song || m === "custom" || !!selected;
+    selectedBox.hidden = !song || !selected;
+    vibeBox.hidden = song;
   };
+
+  const setKind = (k: "song" | "vibe") => {
+    kind = k;
+    document.querySelectorAll(".sr-kind").forEach((b) => b.setAttribute("aria-pressed", String((b as HTMLElement).dataset.kind === k)));
+    closeResults();
+    showError("");
+    setMode(mode);
+    $("sr-submit-label")!.textContent = submitLabel();
+    (k === "vibe" ? vibeInput : search).focus();
+  };
+
+  const syncChips = () => {
+    const v = vibeInput.value.trim().toLowerCase();
+    chips.forEach((c) => c.setAttribute("aria-pressed", String((c.dataset.vibe || "").toLowerCase() === v)));
+  };
+
+  document.querySelectorAll<HTMLButtonElement>(".sr-kind").forEach((b) => {
+    b.addEventListener("click", () => setKind(b.dataset.kind === "vibe" ? "vibe" : "song"));
+  });
+  chips.forEach((c) => {
+    c.addEventListener("click", () => {
+      vibeInput.value = c.dataset.vibe || "";
+      syncChips();
+      showError("");
+    });
+  });
+  vibeInput.addEventListener("input", () => {
+    syncChips();
+    showError("");
+  });
 
   const choose = (idx: number) => {
     const opt = options[idx];
@@ -469,7 +520,15 @@ function setupForm() {
     e.preventDefault();
     showError("");
     let payload: Record<string, string>;
-    if (selected && mode === "search") {
+    if (kind === "vibe") {
+      const vibe = vibeInput.value.trim();
+      if (!vibe) {
+        showError("Pick a vibe or type your own.");
+        vibeInput.focus();
+        return;
+      }
+      payload = { source: "vibe", title: vibe };
+    } else if (selected && mode === "search") {
       payload = {
         source: "search",
         trackId: selected.trackId,
@@ -502,7 +561,14 @@ function setupForm() {
         markVoted(data.request.id);
         upsert(data.request);
         renderList();
-        toast(data.duplicate ? "Already on the list, we upvoted it for you" : "Added! 🎶");
+        const isVibe = data.request.source === "vibe";
+        toast(
+          data.duplicate
+            ? `${isVibe ? "That vibe's" : "Already"} on the list, we upvoted it for you`
+            : isVibe
+              ? "Vibe added! ✨"
+              : "Added! 🎶",
+        );
         try {
           localStorage.setItem("songRequests:name", nameInput.value.trim());
         } catch {
@@ -512,11 +578,13 @@ function setupForm() {
         search.value = "";
         customTitle.value = "";
         customArtist.value = "";
+        vibeInput.value = "";
+        syncChips();
         noteInput.value = "";
         noteCount.textContent = `0/${noteInput.maxLength}`;
         resetSelection();
         closeResults();
-        const item = document.querySelector<HTMLElement>(`#sr-list [data-id="${CSS.escape(data.request.id)}"]`);
+        const item = root.querySelector<HTMLElement>(`li[data-id="${CSS.escape(data.request.id)}"]`);
         item?.classList.add("ring-2", "ring-orange-600");
         setTimeout(() => item?.classList.remove("ring-2", "ring-orange-600"), 2500);
       } else {
@@ -527,7 +595,7 @@ function setupForm() {
       showError("Couldn't reach the server. Check your connection and try again.");
     } finally {
       submit.disabled = false;
-      $("sr-submit-label")!.textContent = "Request song";
+      $("sr-submit-label")!.textContent = submitLabel();
     }
   });
 }

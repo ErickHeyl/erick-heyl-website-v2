@@ -93,6 +93,18 @@ describe.each(factories)("%s", (_name, make) => {
     expect(different.duplicate).toBe(false);
   });
 
+  it("dedupes vibes among themselves but never against songs, and frees the key on delete", async () => {
+    const vibe = await store.createOrUpvote(song("90s R&B", "", { source: "vibe" }));
+    const again = await store.createOrUpvote(song("90's r and b", "", { source: "vibe" }));
+    expect(again.duplicate).toBe(true);
+    expect(again.request.id).toBe(vibe.request.id);
+    const songSameText = await store.createOrUpvote(song("90s R&B", ""));
+    expect(songSameText.duplicate).toBe(false);
+    await store.delete(vibe.request.id);
+    const fresh = await store.createOrUpvote(song("90s R&B", "", { source: "vibe" }));
+    expect(fresh.duplicate).toBe(false);
+  });
+
   it("marks played (sorted to the bottom) and back to pending", async () => {
     const a = (await store.createOrUpvote(song("A", "x"))).request;
     await store.upvote(a.id);

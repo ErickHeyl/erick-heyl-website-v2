@@ -59,6 +59,22 @@ describe("POST /api/song-requests", () => {
     expect(body.request.upvotes).toBe(2);
   });
 
+  it("creates vibes and upvotes duplicate vibes without matching songs", async () => {
+    const first = await handleCreate(post({ source: "vibe", title: "Disco & Funk" }), "1.1.1.1", deps);
+    expect(first.status).toBe(201);
+    expect((await first.json()).request).toMatchObject({ source: "vibe", title: "Disco & Funk", artist: "", upvotes: 1 });
+
+    const dup = await handleCreate(post({ source: "vibe", title: "disco and funk" }), "2.2.2.2", deps);
+    expect(dup.status).toBe(200);
+    expect((await dup.json()).request.upvotes).toBe(2);
+
+    // A song with the same text is a separate request.
+    const songRes = await handleCreate(post({ source: "custom", title: "Disco & Funk" }), "3.3.3.3", deps);
+    expect(songRes.status).toBe(201);
+    const list = await (await handleList(new Request(BASE), deps)).json();
+    expect(list.requests).toHaveLength(2);
+  });
+
   it("returns 400 on bad input", async () => {
     const tooLong = await handleCreate(post({ source: "custom", title: "x".repeat(101) }), "1.1.1.1", deps);
     expect(tooLong.status).toBe(400);

@@ -6,6 +6,7 @@ type Seed = {
   title: string;
   artist: string;
   search?: string;
+  vibe?: boolean;
   requestedBy: string;
   note?: string;
   upvotes: number;
@@ -20,9 +21,11 @@ const SEEDS: Seed[] = [
   { title: "Erick's 35th Birthday Mix (the whole thing)", artist: "E.Heyl", requestedBy: "Tony", note: "run it back", upvotes: 3, minutesAgo: 12 },
   { title: "That song from the wedding with the saxophone", artist: "", requestedBy: "Sam", upvotes: 1, minutesAgo: 3 },
   { title: "Dancing Queen", artist: "ABBA", search: "Dancing Queen ABBA", requestedBy: "Priya", upvotes: 4, status: "played", minutesAgo: 55 },
+  { title: "90s R&B", artist: "", vibe: true, requestedBy: "Nina", note: "Aaliyah please", upvotes: 6, minutesAgo: 25 },
+  { title: "Afrobeats", artist: "", vibe: true, requestedBy: "Anonymous", upvotes: 3, minutesAgo: 9 },
 ];
 
-/** Dev-only: replace the local store contents with ~6 sample requests. */
+/** Dev-only: replace the local store contents with sample songs and vibes. */
 export async function seedLocalStore(store: LocalRequestStore, now = new Date()): Promise<number> {
   const requests: SongRequest[] = [];
   for (const s of SEEDS) {
@@ -30,7 +33,7 @@ export async function seedLocalStore(store: LocalRequestStore, now = new Date())
       id: newId(),
       title: s.title,
       artist: s.artist,
-      source: "custom",
+      source: s.vibe ? "vibe" : "custom",
       requestedBy: s.requestedBy,
       upvotes: s.upvotes,
       status: s.status ?? "pending",

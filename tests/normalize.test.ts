@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dedupeKeys, normalizePart, textKey } from "../src/lib/normalize";
+import { dedupeKeys, normalizePart, textKey, vibeKey } from "../src/lib/normalize";
 
 describe("normalizePart", () => {
   it("ignores case, punctuation and extra whitespace", () => {
@@ -33,5 +33,10 @@ describe("dedupe keys", () => {
   it("puts the trackId key first when present", () => {
     expect(dedupeKeys({ title: "Levels", artist: "Avicii", trackId: "123" })).toEqual(["track:123", textKey("Levels", "Avicii")]);
     expect(dedupeKeys({ title: "Levels", artist: "Avicii" })).toEqual([textKey("Levels", "Avicii")]);
+  });
+  it("matches vibes by normalized text, in their own key space", () => {
+    expect(dedupeKeys({ title: "90's R&B", artist: "", source: "vibe" })).toEqual([vibeKey("90s r and b")]);
+    expect(vibeKey("Disco & Funk")).toBe(vibeKey("disco and funk"));
+    expect(dedupeKeys({ title: "Disco", artist: "", source: "vibe" })).not.toContain(textKey("Disco", ""));
   });
 });

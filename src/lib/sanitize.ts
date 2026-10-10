@@ -50,15 +50,19 @@ export function validateRequestInput(body: unknown): ValidationResult {
   const b = body as Record<string, unknown>;
   const errors: Record<string, string> = {};
 
-  const source = b.source === "search" ? "search" : b.source === "custom" ? "custom" : null;
-  if (!source) errors.source = 'source must be "search" or "custom".';
+  const source = b.source === "search" || b.source === "custom" || b.source === "vibe" ? b.source : null;
+  if (!source) errors.source = 'source must be "search", "custom" or "vibe".';
 
   const title = cleanText(b.title);
-  const artist = cleanText(b.artist);
+  // Vibes have no artist; ignore anything sent.
+  const artist = source === "vibe" ? "" : cleanText(b.artist);
   const name = cleanText(b.requestedBy);
   const note = cleanText(b.note);
 
-  if (!title) errors.title = "Song title is required.";
+  if (source === "vibe") {
+    if (!title) errors.title = "Tell us the vibe you want.";
+    else if (title.length > LIMITS.vibe) errors.title = `Vibe must be ${LIMITS.vibe} characters or fewer.`;
+  } else if (!title) errors.title = "Song title is required.";
   else if (title.length > LIMITS.title) errors.title = `Title must be ${LIMITS.title} characters or fewer.`;
   if (artist.length > LIMITS.artist) errors.artist = `Artist must be ${LIMITS.artist} characters or fewer.`;
   if (name.length > LIMITS.name) errors.requestedBy = `Name must be ${LIMITS.name} characters or fewer.`;
@@ -75,7 +79,7 @@ export function validateRequestInput(body: unknown): ValidationResult {
   if (Object.keys(errors).length) return { ok: false, errors };
 
   const value: NewSongRequest = {
-    title,
+    title: source === "vibe" ? maskProfanity(title) : title,
     artist,
     source: source!,
     requestedBy: maskProfanity(name) || "Anonymous",

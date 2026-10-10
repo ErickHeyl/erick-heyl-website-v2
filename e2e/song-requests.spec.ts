@@ -135,6 +135,46 @@ test("free text still works when search fails", async ({ page }) => {
   await expect(item(page, "offline anthem")).toBeVisible();
 });
 
+test("vibe requests: chips, free text, dedupe, separate list", async ({ page }) => {
+  await reset(page, "empty");
+  await page.goto("/dj/requests");
+  await expect(page.locator("#sr-vibes-section")).toBeHidden();
+
+  await page.getByRole("button", { name: "A vibe" }).click();
+  await expect(page.locator("#sr-search")).toBeHidden();
+  await expect(page.locator("#sr-submit")).toHaveText(/Request vibe/);
+
+  // Empty submit shows a friendly error.
+  await page.locator("#sr-submit").click();
+  await expect(page.locator("#sr-form-error")).toHaveText("Pick a vibe or type your own.");
+
+  // Quick-pick chip.
+  await page.locator(".sr-vibe-chip", { hasText: "Afrobeats" }).click();
+  await expect(page.locator("#sr-vibe-input")).toHaveValue("Afrobeats");
+  await page.locator("#sr-submit").click();
+  await expect(page.locator("#sr-toast")).toHaveText("Vibe added! ✨");
+  const vibes = page.locator("#sr-vibes > li");
+  await expect(vibes).toHaveCount(1);
+  await expect(page.locator("#sr-list > li")).toHaveCount(0); // songs list untouched
+  await expect(page.locator("#sr-vibe-input")).toHaveValue("");
+
+  // Typed duplicate (different case) upvotes instead.
+  await page.locator("#sr-vibe-input").fill("AFROBEATS");
+  await page.locator("#sr-submit").click();
+  await expect(page.locator("#sr-toast")).toHaveText("That vibe's on the list, we upvoted it for you");
+  await expect(vibes).toHaveCount(1);
+  await expect(vibes.first().locator(".sr-votes")).toHaveText("2");
+
+  // Free-text vibe, then switching back to songs restores the search box.
+  await page.locator("#sr-vibe-input").fill("Songs my mom would dance to");
+  await page.locator("#sr-submit").click();
+  await expect(vibes).toHaveCount(2);
+  await page.getByRole("button", { name: "A song" }).click();
+  await expect(page.locator("#sr-search")).toBeVisible();
+  await expect(page.locator("#sr-submit")).toHaveText(/Request song/);
+  await expectNoHorizontalScroll(page);
+});
+
 test("demo screenshots", async ({ page }, info) => {
   // Hide Astro's dev toolbar and wait for artwork so screenshots look like production.
   const prep = async () => {
@@ -154,6 +194,12 @@ test("demo screenshots", async ({ page }, info) => {
   await reset(page, "seed");
   await page.goto("/dj/requests");
   await expect(page.locator("#sr-list > li")).toHaveCount(6);
+  await expect(page.locator("#sr-vibes > li")).toHaveCount(2);
+  await page.getByRole("button", { name: "A vibe" }).click();
+  await page.locator(".sr-vibe-chip", { hasText: "Disco & funk" }).click();
+  await prep();
+  await page.locator("#sr-form").screenshot({ path: `${SHOTS}/${info.project.name}-5-vibe-form.png` });
+  await page.getByRole("button", { name: "A song" }).click();
   await page.locator("#sr-search").fill("dancing in the moonlight");
   await expect(page.locator("#sr-results [role=option] img").first()).toBeVisible();
   await page.waitForLoadState("networkidle");
