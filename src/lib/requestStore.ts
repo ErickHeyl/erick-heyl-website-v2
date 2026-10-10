@@ -5,7 +5,7 @@
  *    duplicate detection uses HSETNX on a normalized key index.
  *  - LocalRequestStore: JSON file in .data/ (local dev / demo) or pure memory.
  *
- * getRequestStore() picks Redis when UPSTASH_REDIS_REST_URL/TOKEN are set and
+ * getRequestStore() picks Redis when UPSTASH_REDIS_REST_URL/TOKEN (or KV_REST_API_URL/TOKEN) are set and
  * falls back to the local store otherwise, so dev needs no accounts.
  */
 import { promises as fs } from "node:fs";
@@ -345,8 +345,9 @@ export class RedisRequestStore implements RequestStore {
 const GLOBAL_KEY = Symbol.for("songRequests.store");
 
 export async function createStoreFromEnv(): Promise<RequestStore> {
-  const url = getEnv("UPSTASH_REDIS_REST_URL");
-  const token = getEnv("UPSTASH_REDIS_REST_TOKEN");
+  // The Vercel Marketplace Upstash integration may name these KV_REST_API_* instead.
+  const url = getEnv("UPSTASH_REDIS_REST_URL") ?? getEnv("KV_REST_API_URL");
+  const token = getEnv("UPSTASH_REDIS_REST_TOKEN") ?? getEnv("KV_REST_API_TOKEN");
   if (url && token) {
     const { Redis } = await import("@upstash/redis");
     const redis = new Redis({ url, token, automaticDeserialization: false });
