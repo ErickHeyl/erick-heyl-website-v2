@@ -21,6 +21,17 @@ pnpm-debug.log*
 # environment variables
 .env
 .env.production
+.env*.local
 
 # macOS-specific files
 .DS_Store
+
+# local song-request store (dev/demo fallback)
+.data/
+
+# playwright
+test-results/
+playwright-report/
+
+# vercel
+.vercel/
