@@ -13,9 +13,9 @@ Deliver: working feature on a branch, tests passing, and a local demo (plus scre
 ---
 
 ## Project context (read before coding)
-- **Framework:** Astro 4 (`package.json`, `astro.config.mjs`) with Tailwind and `astro-icon`. It is deployed on **Vercel** at `https://heylproductions.vercel.app`.
+- **Framework:** Astro 4 (`package.json`, `astro.config.mjs`) with Tailwind and `astro-icon`. It is deployed on **Vercel**.
 - **The site is currently fully static.** It has no adapter and no `output` setting, so it has no server endpoints yet.
-- **Ignore the Next.js leftovers.** `app/`, `components/` (root level), `controllers/`, `models/` and `next.config.ts` come from an old wedding template. The build does not use them, so don't build on them and don't delete them.
+- (The old Next.js wedding-template files have since been removed from the repo.)
 - **Live pages** are in `src/pages/*.astro`. Shared layout: `src/layouts/Layout.astro`. Components: `src/components/`.
 - **Existing DJ page:** `src/pages/dj.astro`. Copy its visual language:
   - Card background `#353439`, inner card `#26262a`, border `#555`, rounded-lg
