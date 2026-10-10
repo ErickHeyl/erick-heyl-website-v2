@@ -178,6 +178,11 @@ export class LocalRequestStore implements RequestStore {
     });
   }
 
+  /** Forget all rate-limit counters (dev seeding / e2e only). */
+  resetRateLimits() {
+    this.buckets.clear();
+  }
+
   /** Insert fully-formed requests (dev seeding only). */
   insertRaw(requests: SongRequest[]) {
     return this.mutate((data) => {

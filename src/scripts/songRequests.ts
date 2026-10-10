@@ -137,7 +137,6 @@ function renderItem(r: SongRequest): HTMLLIElement {
     img.alt = "";
     img.width = 56;
     img.height = 56;
-    img.loading = "lazy";
     img.referrerPolicy = "no-referrer";
     li.appendChild(img);
   } else {
@@ -329,7 +328,7 @@ function setupForm() {
         li.appendChild(ph);
       }
       const txt = el("div", "min-w-0");
-      txt.append(el("p", "text-[#F7F7F7] font-semibold truncate", s.title), el("p", "text-sm text-[#cccccc] truncate", s.artist));
+      txt.append(el("p", "text-[#F7F7F7] font-semibold leading-snug line-clamp-2 break-words", s.title), el("p", "text-sm text-[#cccccc] truncate", s.artist));
       li.appendChild(txt);
       return li;
     });
