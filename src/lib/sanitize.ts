@@ -1,3 +1,4 @@
+import { isOffensive, OFFENSIVE_MESSAGE } from "./moderation";
 import { LIMITS, type NewSongRequest } from "./songRequestTypes";
 
 /**
@@ -14,14 +15,6 @@ export function cleanText(input: unknown): string {
     .replace(/[\u0000-\u001F\u007F\u200B-\u200F\u2028-\u202E\u2060-\u206F\uFEFF]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-// Deliberately tiny; nice-to-have only. Matches whole words, case-insensitive.
-const PROFANITY = ["fuck", "fucking", "shit", "bitch", "cunt", "asshole", "dick", "pussy", "nigger", "faggot", "retard"];
-const PROFANITY_RE = new RegExp(`\\b(${PROFANITY.join("|")})\\b`, "gi");
-
-export function maskProfanity(text: string): string {
-  return text.replace(PROFANITY_RE, (w) => w[0] + "*".repeat(w.length - 1));
 }
 
 const ARTWORK_HOST_RE = /^is\d*-ssl\.mzstatic\.com$|\.mzstatic\.com$/i;
@@ -68,6 +61,14 @@ export function validateRequestInput(body: unknown): ValidationResult {
   if (name.length > LIMITS.name) errors.requestedBy = `Name must be ${LIMITS.name} characters or fewer.`;
   if (note.length > LIMITS.note) errors.note = `Note must be ${LIMITS.note} characters or fewer.`;
 
+  // Block slurs/hate speech in anything a guest typed. Curse words are fine. Search results come
+  // from iTunes, so their title/artist are real releases and aren't filtered.
+  const typed: Array<[string, string]> = [["requestedBy", name], ["note", note]];
+  if (source !== "search") typed.push(["title", title], ["artist", artist]);
+  for (const [field, text] of typed) {
+    if (!errors[field] && isOffensive(text)) errors[field] = OFFENSIVE_MESSAGE;
+  }
+
   let trackId: string | undefined;
   if (source === "search") {
     const raw = typeof b.trackId === "number" ? String(b.trackId) : b.trackId;
@@ -79,12 +80,12 @@ export function validateRequestInput(body: unknown): ValidationResult {
   if (Object.keys(errors).length) return { ok: false, errors };
 
   const value: NewSongRequest = {
-    title: source === "vibe" ? maskProfanity(title) : title,
+    title,
     artist,
     source: source!,
-    requestedBy: maskProfanity(name) || "Anonymous",
+    requestedBy: name || "Anonymous",
   };
-  if (note) value.note = maskProfanity(note);
+  if (note) value.note = note;
   if (source === "search") {
     value.trackId = trackId;
     const artworkUrl = safeUrl(b.artworkUrl, ARTWORK_HOST_RE);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cleanText, isValidId, maskProfanity, validateRequestInput } from "../src/lib/sanitize";
+import { cleanText, isValidId, validateRequestInput } from "../src/lib/sanitize";
 
 describe("cleanText", () => {
   it("trims and collapses whitespace", () => {
@@ -85,9 +85,9 @@ describe("validateRequestInput", () => {
     expect(validateRequestInput({ source: "vibe", title: "  " }).ok).toBe(false);
   });
 
-  it("masks profanity in vibe text", () => {
+  it("allows curse words in vibe text", () => {
     const r = validateRequestInput({ source: "vibe", title: "shit that slaps" });
-    expect(r.ok && r.value.title).toBe("s*** that slaps");
+    expect(r.ok && r.value.title).toBe("shit that slaps");
   });
 
   it("rejects missing/blank title, bad source and missing trackId", () => {
@@ -111,11 +111,31 @@ describe("validateRequestInput", () => {
     }
   });
 
-  it("masks profanity in names and notes", () => {
-    expect(maskProfanity("this is shit")).toBe("this is s***");
+  it("keeps curse words as typed", () => {
     const r = validateRequestInput({ ...custom, requestedBy: "Shit Head", note: "play this fucking song" });
-    expect(r.ok && r.value.requestedBy).toBe("S*** Head");
-    expect(r.ok && r.value.note).toBe("play this f****** song");
+    expect(r.ok && r.value.requestedBy).toBe("Shit Head");
+    expect(r.ok && r.value.note).toBe("play this fucking song");
+  });
+
+  it("rejects offensive wording in every typed field, with a friendly message", () => {
+    const cases: Array<[Record<string, unknown>, string]> = [
+      [{ ...custom, requestedBy: "f@ggot" }, "requestedBy"],
+      [{ ...custom, note: "for the retard" }, "note"],
+      [{ source: "custom", title: "n i g g e r song" }, "title"],
+      [{ source: "custom", title: "Levels", artist: "kike" }, "artist"],
+      [{ source: "vibe", title: "spic music" }, "title"],
+    ];
+    for (const [body, field] of cases) {
+      const r = validateRequestInput(body);
+      expect(r.ok, JSON.stringify(body)).toBe(false);
+      if (!r.ok) expect(r.errors[field]).toBe("That wording isn't allowed here. Please keep it friendly.");
+    }
+  });
+
+  it("doesn't filter title/artist of real iTunes results, but still checks name and note", () => {
+    const real = { source: "search", trackId: "1", title: "Rape Me", artist: "Nirvana" };
+    expect(validateRequestInput(real).ok).toBe(true);
+    expect(validateRequestInput({ ...real, requestedBy: "tranny" }).ok).toBe(false);
   });
 });
 

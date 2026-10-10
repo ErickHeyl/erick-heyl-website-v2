@@ -20,6 +20,11 @@ export const party = {
     "Slow it down",
   ],
   /**
+   * Extra words to reject, on top of the built-in slur/hate list in src/lib/moderation.ts
+   * (e.g. inside jokes you don't want on the list). Whole words, case-insensitive. Curse words are allowed.
+   */
+  blockedWords: [] as string[],
+  /**
    * Vertical (9:16) background video, e.g. a Vercel Blob URL. Set to null to hide.
    * Keep it short, muted-friendly and small (aim for under ~10 MB).
    */

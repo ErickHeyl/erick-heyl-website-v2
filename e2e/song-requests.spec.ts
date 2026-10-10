@@ -148,6 +148,13 @@ test("vibe requests: chips, free text, dedupe, separate list", async ({ page }) 
   await page.locator("#sr-submit").click();
   await expect(page.locator("#sr-form-error")).toHaveText("Pick a vibe or type your own.");
 
+  // Offensive wording is rejected with a friendly message; curse words are fine.
+  await page.locator("#sr-vibe-input").fill("f@ggot music");
+  await page.locator("#sr-submit").click();
+  await expect(page.locator("#sr-form-error")).toHaveText("That wording isn't allowed here. Please keep it friendly.");
+  await expect(page.locator("#sr-vibes > li")).toHaveCount(0);
+  await page.locator("#sr-vibe-input").fill("");
+
   // Quick-pick chip.
   await page.locator(".sr-vibe-chip", { hasText: "Afrobeats" }).click();
   await expect(page.locator("#sr-vibe-input")).toHaveValue("Afrobeats");

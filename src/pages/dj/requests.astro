@@ -57,8 +57,8 @@ Astro.response.headers.set("Cache-Control", "no-store");
         </div>
       )}
 
-      <!-- Request form -->
-      <section class="bg-[#353439]/75 backdrop-blur-md border border-[#555] rounded-lg p-5 sm:p-8">
+      <!-- Request form (z-10 keeps the search dropdown above the blurred cards below it) -->
+      <section class="relative z-10 bg-[#353439]/75 backdrop-blur-md border border-[#555] rounded-lg p-5 sm:p-8">
         <p class="text-[#cccccc] mb-6 text-center">{party.blurb}</p>
 
         {party.requestsOpen ? (
