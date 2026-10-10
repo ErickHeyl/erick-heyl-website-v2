@@ -1,0 +1,189 @@
+---
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+import Layout from "@layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+import { party } from "../../data/party";
+import { getAdminToken } from "../../lib/env";
+import { getRequestStore } from "../../lib/requestStore";
+import { checkAdmin } from "../../lib/songRequestsApi";
+import { LIMITS, type SongRequest } from "../../lib/songRequestTypes";
+
+// Server-rendered on demand (the rest of the site stays static).
+export const prerender = false;
+
+const adminParam = Astro.url.searchParams.get("admin");
+const isAdmin = checkAdmin(adminParam, getAdminToken());
+const badAdmin = adminParam !== null && !isAdmin;
+
+let initial: SongRequest[] = [];
+try {
+  initial = await (await getRequestStore()).list({ sort: "top", includeHidden: isAdmin });
+} catch (err) {
+  console.error("[song-requests] failed to load initial list", err);
+}
+// Safe to inline inside <script type="application/json">: no "<" can close the tag.
+const initialJson = JSON.stringify(initial).replaceAll("\x3c", "\\u003c");
+
+Astro.response.headers.set("Cache-Control", "no-store");
+---
+
+<Layout title={`Song Requests · ${party.title}`}>
+  <Container>
+    <Sectionhead>
+      <Fragment slot="title">Song Requests</Fragment>
+      <Fragment slot="desc">{party.title} · {party.date}</Fragment>
+    </Sectionhead>
+
+    <div
+      id="song-requests"
+      class="flex flex-col gap-6 mx-auto max-w-2xl mt-10 mb-16"
+      data-admin={isAdmin ? "true" : "false"}
+      data-open={party.requestsOpen ? "true" : "false"}
+    >
+      {isAdmin && (
+        <div class="bg-[#1a1a1d] border border-orange-600 rounded-lg p-4 flex items-start gap-3">
+          <Icon name="mdi:shield-account" class="w-6 h-6 text-orange-600 flex-shrink-0" />
+          <p class="text-[#cccccc] text-sm">
+            <span class="font-semibold text-[#F7F7F7]">Admin mode.</span> You can mark songs played, hide them (guests won't see them) or delete them. Keep this URL to yourself.
+          </p>
+        </div>
+      )}
+      {badAdmin && (
+        <div class="bg-[#1a1a1d] border border-[#555] rounded-lg p-4 text-sm text-[#cccccc]">
+          That admin link isn't valid, so you're seeing the guest view.
+        </div>
+      )}
+
+      <!-- Request form -->
+      <section class="bg-[#353439] border border-[#555] rounded-lg p-5 sm:p-8">
+        <p class="text-[#cccccc] mb-6 text-center">{party.blurb}</p>
+
+        {party.requestsOpen ? (
+          <form id="sr-form" class="space-y-4" novalidate autocomplete="off">
+            <div class="relative" id="sr-search-wrap">
+              <label for="sr-search" class="block text-sm font-semibold text-[#F7F7F7] mb-2">Find a song</label>
+              <div class="relative">
+                <Icon name="mdi:magnify" class="w-6 h-6 text-[#999] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  id="sr-search"
+                  type="search"
+                  inputmode="search"
+                  enterkeyhint="search"
+                  placeholder="Song or artist…"
+                  maxlength="100"
+                  role="combobox"
+                  aria-expanded="false"
+                  aria-controls="sr-results"
+                  aria-autocomplete="list"
+                  class="w-full bg-[#26262a] border border-[#555] rounded-lg pl-11 pr-4 py-3.5 text-lg text-[#F7F7F7] placeholder-[#888] focus:outline-none focus:border-orange-600 focus:ring-1 focus:ring-orange-600"
+                />
+              </div>
+              <ul
+                id="sr-results"
+                role="listbox"
+                hidden
+                class="absolute z-20 left-0 right-0 mt-2 bg-[#26262a] border border-[#555] rounded-lg shadow-2xl overflow-hidden max-h-[60vh] overflow-y-auto"
+              ></ul>
+            </div>
+
+            <!-- Selected search result -->
+            <div id="sr-selected" hidden class="flex items-center gap-3 bg-[#26262a] border border-orange-600 rounded-lg p-3">
+              <img id="sr-selected-art" alt="" width="56" height="56" class="w-14 h-14 rounded object-cover flex-shrink-0 bg-[#353439]" />
+              <div class="min-w-0 flex-1">
+                <p id="sr-selected-title" class="font-semibold text-[#F7F7F7] truncate"></p>
+                <p id="sr-selected-artist" class="text-sm text-[#cccccc] truncate"></p>
+              </div>
+              <button type="button" id="sr-clear" class="flex-shrink-0 text-[#cccccc] hover:text-white p-2 -m-1 rounded" aria-label="Choose a different song">
+                <Icon name="mdi:close" class="w-6 h-6" />
+              </button>
+            </div>
+
+            <!-- Free-text entry -->
+            <div id="sr-custom" hidden class="space-y-3 bg-[#26262a] border border-[#555] rounded-lg p-4">
+              <div class="flex items-center justify-between gap-2">
+                <p class="text-sm font-semibold text-[#F7F7F7]">Your request</p>
+                <button type="button" id="sr-custom-cancel" class="text-sm text-orange-600 hover:underline py-1">Back to search</button>
+              </div>
+              <div>
+                <label for="sr-custom-title" class="block text-xs text-[#cccccc] mb-1">Song (or anything you want to hear)</label>
+                <input id="sr-custom-title" type="text" maxlength={LIMITS.title} class="w-full bg-[#353439] border border-[#555] rounded-lg px-3 py-3 text-base text-[#F7F7F7] focus:outline-none focus:border-orange-600" />
+              </div>
+              <div>
+                <label for="sr-custom-artist" class="block text-xs text-[#cccccc] mb-1">Artist <span class="text-[#888]">(optional)</span></label>
+                <input id="sr-custom-artist" type="text" maxlength={LIMITS.artist} class="w-full bg-[#353439] border border-[#555] rounded-lg px-3 py-3 text-base text-[#F7F7F7] focus:outline-none focus:border-orange-600" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="sr-name" class="block text-sm font-semibold text-[#F7F7F7] mb-2">Your name <span class="font-normal text-[#888]">(optional)</span></label>
+                <input id="sr-name" type="text" maxlength={LIMITS.name} placeholder="Anonymous" autocomplete="given-name" class="w-full bg-[#26262a] border border-[#555] rounded-lg px-3 py-3 text-base text-[#F7F7F7] placeholder-[#888] focus:outline-none focus:border-orange-600" />
+              </div>
+              <div>
+                <label for="sr-note" class="block text-sm font-semibold text-[#F7F7F7] mb-2">
+                  Note <span class="font-normal text-[#888]">(optional)</span>
+                  <span id="sr-note-count" class="float-right font-normal text-xs text-[#888]">0/{LIMITS.note}</span>
+                </label>
+                <input id="sr-note" type="text" maxlength={LIMITS.note} placeholder="for the birthday dance!" class="w-full bg-[#26262a] border border-[#555] rounded-lg px-3 py-3 text-base text-[#F7F7F7] placeholder-[#888] focus:outline-none focus:border-orange-600" />
+              </div>
+            </div>
+
+            <p id="sr-form-error" role="alert" hidden class="text-sm text-red-400"></p>
+
+            <button
+              id="sr-submit"
+              type="submit"
+              class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-orange-600 text-white text-lg font-semibold rounded-lg shadow hover:bg-orange-700 active:bg-orange-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Icon name="mdi:music-note-plus" class="w-6 h-6" />
+              <span id="sr-submit-label">Request song</span>
+            </button>
+          </form>
+        ) : (
+          <p class="text-center text-[#F7F7F7] font-semibold">Requests are closed. Thanks for partying! 🎉</p>
+        )}
+      </section>
+
+      <!-- Request list -->
+      <section class="bg-[#353439] border border-[#555] rounded-lg p-5 sm:p-8" aria-labelledby="sr-list-heading">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+          <h2 id="sr-list-heading" class="font-bold text-2xl text-[#F7F7F7]">
+            Requests <span id="sr-count" class="text-base font-normal text-[#cccccc]"></span>
+          </h2>
+          <div class="inline-flex rounded-lg border border-[#555] overflow-hidden text-sm" role="group" aria-label="Sort requests">
+            <button type="button" data-sort="top" aria-pressed="true" class="sr-sort px-4 py-2.5 font-semibold">Most upvoted</button>
+            <button type="button" data-sort="new" aria-pressed="false" class="sr-sort px-4 py-2.5 font-semibold border-l border-[#555]">Newest</button>
+          </div>
+        </div>
+        <ul id="sr-list" class="space-y-3" aria-live="polite"></ul>
+        <p id="sr-empty" hidden class="text-center text-[#cccccc] py-8">No requests yet, be the first!</p>
+      </section>
+
+      <p class="text-center text-sm text-[#888]">
+        <a href="/dj" class="text-orange-600 hover:underline">← Back to DJ mixes</a>
+      </p>
+    </div>
+  </Container>
+
+  <div
+    id="sr-toast"
+    role="status"
+    aria-live="polite"
+    class="fixed left-1/2 -translate-x-1/2 bottom-6 z-50 max-w-[calc(100vw-2rem)] px-5 py-3 rounded-full bg-[#F7F7F7] text-[#030000] font-semibold shadow-2xl transition-all duration-300 opacity-0 translate-y-4 pointer-events-none"
+  ></div>
+
+  <script type="application/json" id="sr-initial" set:html={initialJson} />
+</Layout>
+
+<style is:global>
+  #song-requests [hidden] { display: none !important; }
+  .sr-sort { color: #cccccc; background: #26262a; }
+  .sr-sort[aria-pressed="true"] { color: #fff; background: #ea580c; }
+  #sr-toast.show { opacity: 1; transform: translate(-50%, 0); }
+  #sr-results [aria-selected="true"] { background: #353439; }
+</style>
+
+<script>
+  import "../../scripts/songRequests";
+</script>
