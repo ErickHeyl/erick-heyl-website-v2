@@ -31,6 +31,29 @@ export const party = {
   videoUrl: "https://pwzn8zm3ydesrveo.public.blob.vercel-storage.com/birthday-bg.mp4" as string | null,
   /** Optional still image shown while the video loads (and for reduced-motion users). */
   videoPoster: "/dj/birthday-bg-poster.jpg" as string | null,
+  /**
+   * Party flyer shown at the top of the page (tap to enlarge). Set to null to hide.
+   * The web copies come from scripts/optimize-flyer.mjs (the original PNG is ~4 MB).
+   */
+  flyer: {
+    /** Small/medium/large WebP copies, used as a responsive srcset. */
+    webp: {
+      480: "/pictures/flyer/erick-36-flyer-480.webp",
+      960: "/pictures/flyer/erick-36-flyer-960.webp",
+      1400: "/pictures/flyer/erick-36-flyer-1400.webp",
+    },
+    /** JPEG copy: fallback, link-preview image and the "Save flyer" download. */
+    jpg: "/pictures/flyer/erick-36-flyer-1200.jpg",
+    /** Intrinsic aspect ratio of the flyer (width / height). */
+    width: 1429,
+    height: 2000,
+    alt:
+      "Party flyer in neon purple and pink: DJ EHEYL. Let's party, Erick's 36th. 12/05 at 6:00 PM, Heyl Night Club. " +
+      "Wear your best rave/club attire. This is an adults-only event, thank you for getting a babysitter. " +
+      "A black-and-white photo of Erick DJing on Pioneer decks glows inside a ring at the top.",
+    /** Short facts shown next to the flyer. Keep them in sync with the flyer itself. */
+    highlights: ["6:00 PM", "Heyl Night Club", "Dress code: rave / club attire", "Adults only"],
+  } as const,
   /** Set to false after the party to stop new requests and upvotes. */
   requestsOpen: true,
 } as const;

@@ -1,0 +1,174 @@
+---
+/**
+ * Party flyer card for /dj/requests: a small tilted, neon-glowing thumbnail next to the key
+ * party facts. Tapping it opens the full flyer in a lightbox (native <dialog>), and the large
+ * image only downloads when the lightbox is opened.
+ */
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+  webp: { 480: string; 960: string; 1400: string };
+  jpg: string;
+  width: number;
+  height: number;
+  alt: string;
+  date: string;
+  highlights: readonly string[];
+}
+
+const { webp, jpg, width, height, alt, date, highlights } = Astro.props;
+const ratio = width / height;
+---
+
+<section class="party-flyer bg-[#353439]/75 backdrop-blur-md border border-[#555] rounded-lg p-5 sm:p-6" aria-label="Party flyer">
+  <div class="flex items-center gap-5 sm:gap-7">
+    <button
+      type="button"
+      class="party-flyer__thumb flex-shrink-0 w-28 sm:w-48 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#353439]"
+      data-flyer-open
+      aria-haspopup="dialog"
+      aria-controls="party-flyer-dialog"
+    >
+      <picture>
+        <source type="image/webp" srcset={`${webp[480]} 480w, ${webp[960]} 960w`} sizes="(min-width: 640px) 192px, 112px" />
+        <img src={jpg} alt={alt} width={width} height={height} decoding="async" class="block w-full h-auto rounded-md" />
+      </picture>
+      <span class="party-flyer__hint" aria-hidden="true">
+        <Icon name="mdi:magnify-plus-outline" class="w-4 h-4" />
+      </span>
+      <span class="sr-only">Enlarge flyer</span>
+    </button>
+
+    <div class="min-w-0 flex-1">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-fuchsia-400">You're invited</p>
+      <p class="mt-1 font-bold text-base sm:text-2xl leading-tight text-[#F7F7F7]">{date}</p>
+      <ul class="flex flex-wrap gap-1.5 sm:gap-2 mt-3">
+        {highlights.map((h) => (
+          <li class="px-2.5 py-1 rounded-full border border-[#555] bg-[#26262a] text-xs sm:text-sm text-[#cccccc]">{h}</li>
+        ))}
+      </ul>
+      <button type="button" data-flyer-open aria-haspopup="dialog" aria-controls="party-flyer-dialog" class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-orange-600 hover:underline py-1">
+        <Icon name="mdi:image-outline" class="w-5 h-5" /> View full flyer
+      </button>
+    </div>
+  </div>
+</section>
+
+<dialog id="party-flyer-dialog" class="party-flyer__dialog" aria-label="Party flyer">
+  <div class="party-flyer__frame" style={`--flyer-ratio: ${ratio}`}>
+    <!-- The full-size image lives in a <template> and is only added (and downloaded) on first open. -->
+    <div class="party-flyer__slot rounded-lg bg-[#26262a]" data-flyer-slot style={`aspect-ratio: ${width} / ${height}`}></div>
+    <template id="party-flyer-full">
+      <picture>
+        <source type="image/webp" srcset={`${webp[960]} 960w, ${webp[1400]} 1400w`} sizes={`min(100vw, ${Math.round(ratio * 88)}vh)`} />
+        <img src={jpg} alt={alt} width={width} height={height} decoding="async" class="block w-full h-auto rounded-lg" />
+      </picture>
+    </template>
+    <div class="flex items-center justify-center gap-3 mt-3">
+      <a href={jpg} download="erick-36th-flyer.jpg" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold">
+        <Icon name="mdi:download" class="w-5 h-5" /> Save flyer
+      </a>
+      <button type="button" data-flyer-close class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#555] bg-[#26262a] text-[#F7F7F7] text-sm font-semibold hover:border-[#888]">
+        <Icon name="mdi:close" class="w-5 h-5" /> Close
+      </button>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  /* Neon glow in the flyer's own purple/pink, with a slight tilt that straightens on hover. */
+  .party-flyer__thumb {
+    position: relative;
+    transform: rotate(-3deg);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    box-shadow:
+      0 0 0 1px rgba(232, 121, 249, 0.55),
+      0 0 18px rgba(168, 85, 247, 0.55),
+      0 0 48px rgba(236, 72, 153, 0.25);
+    animation: party-flyer-glow 4s ease-in-out infinite alternate;
+  }
+  .party-flyer__thumb:hover,
+  .party-flyer__thumb:focus-visible {
+    transform: rotate(0deg) scale(1.03);
+    box-shadow:
+      0 0 0 1px rgba(232, 121, 249, 0.8),
+      0 0 26px rgba(168, 85, 247, 0.75),
+      0 0 70px rgba(236, 72, 153, 0.4);
+  }
+  @keyframes party-flyer-glow {
+    from { filter: drop-shadow(0 0 0 rgba(168, 85, 247, 0)); }
+    to { filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.45)); }
+  }
+  .party-flyer__hint {
+    position: absolute;
+    right: 0.375rem;
+    bottom: 0.375rem;
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 9999px;
+    background: rgba(3, 0, 0, 0.7);
+    color: #f7f7f7;
+  }
+
+  .party-flyer__dialog {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    max-width: 100vw;
+    max-height: 100vh;
+    overflow: visible;
+  }
+  .party-flyer__dialog::backdrop {
+    background: rgba(3, 0, 0, 0.88);
+    backdrop-filter: blur(6px);
+  }
+  /* Fit the whole flyer on screen: as wide as possible without exceeding ~88% of the height. */
+  .party-flyer__frame {
+    width: min(calc(100vw - 2rem), calc(88vh * var(--flyer-ratio)));
+  }
+  .party-flyer__dialog[open] .party-flyer__frame {
+    animation: party-flyer-pop 0.2s ease-out;
+  }
+  @keyframes party-flyer-pop {
+    from { opacity: 0; transform: scale(0.96); }
+  }
+  :global(html:has(dialog.party-flyer__dialog[open])) {
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .party-flyer__thumb,
+    .party-flyer__dialog[open] .party-flyer__frame {
+      animation: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const dialog = document.getElementById("party-flyer-dialog") as HTMLDialogElement | null;
+  const full = document.getElementById("party-flyer-full") as HTMLTemplateElement | null;
+  if (dialog && typeof dialog.showModal === "function") {
+    const slot = dialog.querySelector<HTMLElement>("[data-flyer-slot]");
+    const open = () => {
+      if (slot && full && !slot.firstElementChild) slot.append(full.content.cloneNode(true));
+      dialog.showModal();
+    };
+    document.querySelectorAll<HTMLElement>("[data-flyer-open]").forEach((btn) => btn.addEventListener("click", open));
+    dialog.querySelector("[data-flyer-close]")?.addEventListener("click", () => dialog.close());
+    // Clicking the dark backdrop (outside the flyer and buttons) closes it too.
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  } else {
+    // Very old browsers without <dialog>: just open the image.
+    document.querySelectorAll<HTMLElement>("[data-flyer-open]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const img = full?.content.querySelector("img");
+        if (img) window.open(img.getAttribute("src")!, "_blank", "noopener");
+      }),
+    );
+  }
+</script>

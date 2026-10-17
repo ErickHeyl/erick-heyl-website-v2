@@ -3,6 +3,7 @@ import Container from "@components/container.astro";
 import Sectionhead from "@components/sectionhead.astro";
 import Layout from "@layouts/Layout.astro";
 import VideoBackground from "@components/VideoBackground.astro";
+import PartyFlyer from "@components/PartyFlyer.astro";
 import { Icon } from "astro-icon/components";
 import { party } from "../../data/party";
 import { getAdminToken } from "../../lib/env";
@@ -29,7 +30,7 @@ const initialJson = JSON.stringify(initial).replaceAll("\x3c", "\\u003c");
 Astro.response.headers.set("Cache-Control", "no-store");
 ---
 
-<Layout title={`Song Requests · ${party.title}`}>
+<Layout title={`Song Requests · ${party.title}`} image={party.flyer?.jpg}>
   {party.videoUrl && <VideoBackground src={party.videoUrl} poster={party.videoPoster ?? undefined} />}
   <Container>
     <Sectionhead>
@@ -56,6 +57,8 @@ Astro.response.headers.set("Cache-Control", "no-store");
           That admin link isn't valid, so you're seeing the guest view.
         </div>
       )}
+
+      {party.flyer && <PartyFlyer {...party.flyer} date={party.date} />}
 
       <!-- Request form (z-10 keeps the search dropdown above the blurred cards below it) -->
       <section class="relative z-10 bg-[#353439]/75 backdrop-blur-md border border-[#555] rounded-lg p-5 sm:p-8">

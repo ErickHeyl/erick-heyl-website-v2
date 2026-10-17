@@ -1,0 +1,165 @@
+---
+/**
+ * One self-hosted mix (public Vercel Blob URL) with a small custom audio player that matches
+ * the DJ page cards. Without JavaScript the browser's native <audio controls> is shown instead.
+ * preload="none" so a multi-hundred-MB mix is never downloaded until someone presses play;
+ * the browser then streams it with range requests.
+ */
+import { Icon } from "astro-icon/components";
+import { formatMixDate, isPlaceholderMix, type BlobMix } from "../data/mixes";
+
+export interface Props {
+  mix: BlobMix;
+}
+
+const { mix } = Astro.props;
+const placeholder = isPlaceholderMix(mix);
+const meta = [mix.genre, formatMixDate(mix.date), mix.duration].filter(Boolean).join(" • ");
+const downloadUrl = `${mix.url}${mix.url.includes("?") ? "&" : "?"}download=1`;
+---
+
+<article
+  class:list={[
+    "blob-mix border rounded-lg p-6 bg-[#26262a]",
+    placeholder ? "border-dashed border-orange-600" : "border-[#555]",
+  ]}
+  data-blob-mix
+>
+  <div class="flex items-start gap-4">
+    {mix.cover && (
+      <img src={mix.cover} alt="" width="96" height="96" loading="lazy" decoding="async" class="w-20 h-20 sm:w-24 sm:h-24 rounded object-cover flex-shrink-0 bg-[#353439]" />
+    )}
+    <div class="min-w-0 flex-1">
+      {placeholder && (
+        <p class="inline-block mb-2 px-2 py-0.5 rounded bg-orange-600/20 text-orange-500 text-xs font-semibold uppercase tracking-wide">
+          TODO: paste Blob URL in src/data/mixes.ts (dev only, hidden on the live site)
+        </p>
+      )}
+      <h4 class="font-semibold text-lg text-[#F7F7F7] mb-2">{mix.title}</h4>
+      {meta && <p class="text-[#cccccc] text-sm">{meta}</p>}
+    </div>
+  </div>
+
+  {placeholder ? (
+    <div class="mt-4 flex items-center gap-3 bg-[#1a1a1d] border border-[#444] rounded-lg p-3 text-sm text-[#888]">
+      <Icon name="mdi:cloud-upload-outline" class="w-6 h-6 flex-shrink-0" /> Upload pending, no audio yet.
+    </div>
+  ) : (
+    <div class="mt-4 bg-[#1a1a1d] border border-[#444] rounded-lg p-3">
+      <audio src={mix.url} preload="none" controls class="blob-mix__native w-full"></audio>
+      <div class="blob-mix__ui hidden items-center gap-3">
+        <button
+          type="button"
+          class="blob-mix__toggle flex-shrink-0 grid place-items-center w-12 h-12 rounded-full bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white transition"
+          aria-label={`Play ${mix.title}`}
+          data-label-play={`Play ${mix.title}`}
+          data-label-pause={`Pause ${mix.title}`}
+        >
+          <Icon name="mdi:play" class="blob-mix__icon-play w-7 h-7" />
+          <Icon name="mdi:pause" class="blob-mix__icon-pause w-7 h-7 hidden" />
+          <Icon name="mdi:loading" class="blob-mix__icon-loading w-7 h-7 hidden animate-spin" />
+        </button>
+        <span class="blob-mix__time w-14 text-right text-xs tabular-nums text-[#cccccc]">0:00</span>
+        <input
+          type="range"
+          class="blob-mix__seek flex-1 min-w-0 accent-orange-600 cursor-pointer"
+          min="0"
+          max="1000"
+          step="1"
+          value="0"
+          aria-label={`Seek in ${mix.title}`}
+        />
+        <span class="blob-mix__total w-14 text-xs tabular-nums text-[#cccccc]">{mix.duration ?? "--:--"}</span>
+      </div>
+    </div>
+  )}
+
+  {mix.description && <p class="text-[#cccccc] mt-3">{mix.description}</p>}
+  {!placeholder && mix.downloadable && (
+    <div class="mt-3">
+      <a href={downloadUrl} class="text-orange-600 hover:underline text-sm">Download MP3 →</a>
+    </div>
+  )}
+</article>
+
+<script>
+  import { formatClock } from "../data/mixes";
+
+  const players = Array.from(document.querySelectorAll<HTMLElement>("[data-blob-mix]"));
+
+  for (const card of players) {
+    const audio = card.querySelector<HTMLAudioElement>(".blob-mix__native");
+    const ui = card.querySelector<HTMLElement>(".blob-mix__ui");
+    if (!audio || !ui) continue;
+    const toggle = ui.querySelector<HTMLButtonElement>(".blob-mix__toggle")!;
+    const seek = ui.querySelector<HTMLInputElement>(".blob-mix__seek")!;
+    const time = ui.querySelector<HTMLElement>(".blob-mix__time")!;
+    const total = ui.querySelector<HTMLElement>(".blob-mix__total")!;
+    const icons = {
+      play: ui.querySelector(".blob-mix__icon-play")!,
+      pause: ui.querySelector(".blob-mix__icon-pause")!,
+      loading: ui.querySelector(".blob-mix__icon-loading")!,
+    };
+
+    // Swap the native controls for the custom ones.
+    audio.controls = false;
+    audio.classList.add("hidden");
+    ui.classList.remove("hidden");
+    ui.classList.add("flex");
+
+    let seeking = false;
+    const show = (state: "play" | "pause" | "loading") => {
+      icons.play.classList.toggle("hidden", state !== "play");
+      icons.pause.classList.toggle("hidden", state !== "pause");
+      icons.loading.classList.toggle("hidden", state !== "loading");
+      toggle.setAttribute("aria-label", (state === "play" ? toggle.dataset.labelPlay : toggle.dataset.labelPause) ?? "");
+    };
+    const render = () => {
+      time.textContent = formatClock(audio.currentTime);
+      if (!seeking && audio.duration) seek.value = String(Math.round((audio.currentTime / audio.duration) * 1000));
+    };
+
+    toggle.addEventListener("click", () => {
+      if (audio.paused) {
+        show("loading");
+        audio.play().catch(() => show("play"));
+      } else {
+        audio.pause();
+      }
+    });
+    audio.addEventListener("play", () => {
+      // Only one mix plays at a time.
+      document.querySelectorAll("audio").forEach((other) => other !== audio && other.pause());
+    });
+    audio.addEventListener("playing", () => show("pause"));
+    audio.addEventListener("waiting", () => show("loading"));
+    audio.addEventListener("pause", () => show("play"));
+    audio.addEventListener("ended", () => show("play"));
+    audio.addEventListener("error", () => {
+      show("play");
+      time.textContent = "Error";
+    });
+    audio.addEventListener("timeupdate", render);
+    audio.addEventListener("loadedmetadata", () => {
+      if (Number.isFinite(audio.duration)) total.textContent = formatClock(audio.duration);
+      render();
+    });
+
+    seek.addEventListener("input", () => {
+      seeking = true;
+      if (audio.duration) time.textContent = formatClock((Number(seek.value) / 1000) * audio.duration);
+    });
+    seek.addEventListener("change", () => {
+      seeking = false;
+      if (audio.duration) {
+        audio.currentTime = (Number(seek.value) / 1000) * audio.duration;
+      } else {
+        // Metadata not loaded yet (preload="none"): start loading, then jump.
+        const target = Number(seek.value) / 1000;
+        audio.addEventListener("loadedmetadata", () => (audio.currentTime = target * audio.duration), { once: true });
+        audio.preload = "metadata";
+        audio.load();
+      }
+    });
+  }
+</script>

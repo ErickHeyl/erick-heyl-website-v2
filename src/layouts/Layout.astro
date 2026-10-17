@@ -7,16 +7,15 @@ import landingImage from "assets/dean-landing-no-bg.png";
 
 export interface Props {
   title: string;
+  /** Optional link-preview (og:image) path, e.g. the party flyer. Defaults to /opengraph.jpg. */
+  image?: string;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
 
-const resolvedImageWithDomain = new URL(
-  "/opengraph.jpg",
-  Astro.site
-).toString();
+const { title, image = "/opengraph.jpg" } = Astro.props;
 
-const { title } = Astro.props;
+const resolvedImageWithDomain = new URL(image, Astro.site).toString();
 
 const makeTitle = "Erick Heyl";
 ---

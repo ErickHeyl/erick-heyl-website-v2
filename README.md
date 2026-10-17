@@ -15,12 +15,17 @@ npm test           # unit tests (Vitest)
 npm run test:e2e   # browser tests (Playwright, starts the dev server)
 ```
 
+## DJ mixes (`/dj`)
+
+SoundCloud/Mixcloud embeds live in `src/pages/dj.astro`. Self-hosted mixes (MP3s on Vercel Blob, played with
+a built-in audio player) are listed in `src/data/mixes.ts`. Upload steps: [docs/blob-mix-upload.md](docs/blob-mix-upload.md).
+
 ## Song requests (`/dj/requests`)
 
 Guests search for songs (iTunes Search API), type anything in, or request a vibe/genre, then upvote
 each other's requests. Spec: [SongRequests.md](SongRequests.md).
 
-- **Party details, vibe chips, background video:** `src/data/party.ts`
+- **Party details, vibe chips, background video, flyer:** `src/data/party.ts` (flyer web copies: `node scripts/optimize-flyer.mjs`)
 - **Admin view:** `/dj/requests?admin=<SONG_REQUESTS_ADMIN_TOKEN>` (in `npm run dev` the token is `dev-dj-admin`)
 - **Local demo data:** `/api/song-requests/dev-seed` (dev only; `?empty=1` clears it)
 
