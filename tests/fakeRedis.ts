@@ -14,7 +14,7 @@ export class FakeRedis implements RedisLike {
   async hget(key: string, field: string) {
     return this.hashes.get(key)?.get(field) ?? null;
   }
-  async hgetall(key: string) {
+  async hgetall(key: string): Promise<Record<string, unknown> | unknown[] | null> {
     const m = this.hashes.get(key);
     return m && m.size ? Object.fromEntries(m) : null;
   }

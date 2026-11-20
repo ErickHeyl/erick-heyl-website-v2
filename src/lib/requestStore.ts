@@ -198,7 +198,8 @@ export class LocalRequestStore implements RequestStore {
 /** The subset of the @upstash/redis client we use (makes it easy to fake in tests). */
 export interface RedisLike {
   hget(key: string, field: string): Promise<string | null>;
-  hgetall(key: string): Promise<Record<string, unknown> | null>;
+  /** Upstash returns a flat [field, value, ...] array when automaticDeserialization is off. */
+  hgetall(key: string): Promise<Record<string, unknown> | unknown[] | null>;
   hset(key: string, values: Record<string, string | number>): Promise<number>;
   hsetnx(key: string, field: string, value: string): Promise<number>;
   hexists(key: string, field: string): Promise<number>;
@@ -211,6 +212,15 @@ export interface RedisLike {
 }
 
 type StoredItem = Omit<SongRequest, "upvotes">;
+
+/** Normalize an HGETALL reply (object, or Upstash's raw flat array) into a field -> value map. */
+export function hashToRecord(reply: Record<string, unknown> | unknown[] | null | undefined): Record<string, unknown> {
+  if (!reply) return {};
+  if (!Array.isArray(reply)) return reply;
+  const out: Record<string, unknown> = {};
+  for (let i = 0; i + 1 < reply.length; i += 2) out[String(reply[i])] = reply[i + 1];
+  return out;
+}
 
 export class RedisRequestStore implements RequestStore {
   readonly kind = "redis" as const;
@@ -235,10 +245,12 @@ export class RedisRequestStore implements RequestStore {
   }
 
   async list(opts?: ListOptions) {
-    const [items, votes] = await Promise.all([this.redis.hgetall(this.items), this.redis.hgetall(this.votes)]);
+    const [rawItems, rawVotes] = await Promise.all([this.redis.hgetall(this.items), this.redis.hgetall(this.votes)]);
+    const items = hashToRecord(rawItems);
+    const votes = hashToRecord(rawVotes);
     const out: SongRequest[] = [];
-    for (const [id, json] of Object.entries(items ?? {})) {
-      const r = this.parse(json, votes?.[id]);
+    for (const [id, json] of Object.entries(items)) {
+      const r = this.parse(json, votes[id]);
       if (r) out.push(r);
     }
     return sortRequests(out, opts);

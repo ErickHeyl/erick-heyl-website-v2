@@ -159,6 +159,37 @@ describe.each(factories)("%s", (_name, make) => {
   });
 });
 
+/** Mimics @upstash/redis with automaticDeserialization: false: HGETALL returns a flat
+ *  [field, value, ...] array, and each hash may list its fields in a different order. */
+class FlatArrayRedis extends FakeRedis {
+  async hgetall(key: string) {
+    const obj = await super.hgetall(key);
+    if (!obj) return null;
+    const entries = Object.entries(obj);
+    if (key.endsWith(":votes")) entries.reverse();
+    return entries.flat();
+  }
+}
+
+describe("RedisRequestStore with Upstash flat-array HGETALL replies", () => {
+  it("matches vote counts to the right request regardless of hash field order", async () => {
+    const c = clock();
+    const store = new RedisRequestStore(new FlatArrayRedis(), "test", c.now);
+    const a = (await store.createOrUpvote(song("Alpha", "A"))).request;
+    c.tick();
+    const b = (await store.createOrUpvote(song("Bravo", "B"))).request;
+    c.tick();
+    const d = (await store.createOrUpvote(song("Charlie", "C"))).request;
+    await store.upvote(a.id);
+    await store.upvote(a.id);
+    await store.upvote(b.id);
+
+    const votes = Object.fromEntries((await store.list()).map((r) => [r.title, r.upvotes]));
+    expect(votes).toEqual({ Alpha: 3, Bravo: 2, Charlie: 1 });
+    expect((await store.list()).map((r) => r.id)).toEqual([a.id, b.id, d.id]);
+  });
+});
+
 describe("LocalRequestStore file persistence", () => {
   it("persists to and reloads from the JSON file", async () => {
     const file = path.join(tmp, "persist.json");
