@@ -1,11 +1,12 @@
 // @astrojs/vercel v7 (the last line supporting Astro 4) only knows Node 18/20 and
 // falls back to the "nodejs18.x" runtime when building on newer Node. Vercel no
 // longer accepts Node 18 functions, so after `astro build` we set the function
-// runtime to match the Node major used for the build (20, 22 or 24).
+// runtime to the newest Vercel-supported Node major not above the build's.
+// Node 20 is discontinued on Vercel, so builds on Node 26+ fall back to 24.
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-const SUPPORTED = new Set([20, 22, 24]);
+const SUPPORTED = [22, 24];
 const major = Number(process.versions.node.split(".")[0]);
 const functionsDir = path.join(process.cwd(), ".vercel", "output", "functions");
 
@@ -16,7 +17,8 @@ async function main() {
   } catch {
     return; // no server functions (fully static build)
   }
-  const runtime = `nodejs${SUPPORTED.has(major) ? major : 20}.x`;
+  const pick = SUPPORTED.filter((v) => v <= major).pop() ?? SUPPORTED[0];
+  const runtime = `nodejs${pick}.x`;
   for (const dir of entries) {
     const file = path.join(functionsDir, dir, ".vc-config.json");
     let config;
